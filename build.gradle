@@ -1,0 +1,24 @@
+plugins {
+    id 'application'
+}
+
+group = 'kit.corp'
+version = '1.0-SNAPSHOT'
+
+mainClassName = 'kit.corp.Main'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'org.jsoup:jsoup:1.18.3'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.18.2'
+    implementation 'com.microsoft.playwright:playwright:1.51.0'
+    testImplementation platform('org.junit:junit-bom:5.10.0')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+}
+
+test {
+    useJUnitPlatform()
+}
