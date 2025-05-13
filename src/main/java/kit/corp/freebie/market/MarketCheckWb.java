@@ -11,11 +11,13 @@ import kit.corp.util.KitProxy;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.springframework.stereotype.Component;
 
 import java.sql.Timestamp;
 import java.util.List;
 import java.util.Objects;
 
+@Component
 public class MarketCheckWb implements MarketCheck {
     private static final List<String> CSS_QUERY = List.of(
             ".price-block__content"

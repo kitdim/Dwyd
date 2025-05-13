@@ -1,0 +1,15 @@
+spring:
+  application:
+    name: Dwyd
+  jpa:
+    hibernate:
+      ddl-auto: validate  # Liquibase управляет схемой
+    show-sql: true
+  liquibase:
+      change-log: classpath:db/changelog/db.changelog-master.xml
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+  profiles:
+    active: dev

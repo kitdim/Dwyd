@@ -1,16 +1,13 @@
 package kit.corp.repository;
 
 import kit.corp.model.Product;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-public interface ProductRepository {
-    Optional<Product> getById(UUID id);
-    Optional<Boolean> save(Product product);
-    Optional<Boolean> deleteById(UUID id);
-    void edit(Product product);
-    boolean isEmpty();
-    List<Product> getAll();
+@Repository
+public interface ProductRepository extends JpaRepository<Product, Long> {
 }

@@ -8,11 +8,13 @@ import kit.corp.model.Product;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.List;
 
+@Component
 public class MarkerCheckYandex implements MarketCheck {
     private static final String URL = "https://market.yandex.ru/pr/";
     private static final List<String> CSS_QUERY = List.of(
@@ -52,12 +54,12 @@ public class MarkerCheckYandex implements MarketCheck {
     @Override
     public Product getPrice(JsonNode node) {
         Product product = new Product();
-        double greenPrice = node.findValue("greenPrice").findValue("price").findValue("value").asDouble();
-        double discountedPrice = node.findValue("discountedPrice").findValue("price").findValue("value").asDouble();
+        double priceWithCard = node.findValue("prices").findValue("greenPrice").findValue("price").findValue("value").asDouble();
+        double priceWithoutCard = node.findValue("prices").findValue("price").findValue("value").asDouble();
 
-        product.setPrice(greenPrice);
-        product.setLastPrice(discountedPrice);
-        product.setPriceWithDiscount(discountedPrice);
+        product.setPrice(priceWithoutCard);
+        product.setLastPrice(priceWithoutCard);
+        product.setPriceWithDiscount(priceWithCard);
         product.setCheckTime(new Timestamp(System.currentTimeMillis()));
 
         return product;
