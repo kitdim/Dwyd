@@ -1,85 +1,30 @@
 package kit.corp.model;
 
+import jakarta.persistence.*;
 import kit.corp.freebie.MarketCheckType;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.sql.Timestamp;
-import java.util.UUID;
 
+import static jakarta.persistence.GenerationType.IDENTITY;
+
+@Entity
+@Table(name = "products")
+@Getter
+@Setter
 public class Product {
-    private UUID id;
+    @Id
+    @GeneratedValue(strategy = IDENTITY)
+    private Long id;
     private double price;
+    @Column(name = "price_with_discount")
     private double priceWithDiscount;
+    @Column(name = "last_price")
     private double lastPrice;
     private String article;
+    @Enumerated(EnumType.STRING)
     private MarketCheckType market;
+    @Column(name = "check_time")
     private Timestamp checkTime;
-
-    public double getPrice() {
-        return price;
-    }
-
-    public double getPriceWithDiscount() {
-        return priceWithDiscount;
-    }
-
-    public String getArticle() {
-        return article;
-    }
-
-    public MarketCheckType getMarket() {
-        return market;
-    }
-
-    public double getLastPrice() {
-        return lastPrice;
-    }
-
-    public void setPrice(double price) {
-        this.price = price;
-    }
-
-    public void setMarket(MarketCheckType market) {
-        this.market = market;
-    }
-
-    public void setPriceWithDiscount(double priceWithDiscount) {
-        this.priceWithDiscount = priceWithDiscount;
-    }
-
-    public void setLastPrice(double lastPrice) {
-        this.lastPrice = lastPrice;
-    }
-
-    public void setArticle(String article) {
-        this.article = article;
-    }
-
-    public UUID getId() {
-        return id;
-    }
-
-    public void setId(UUID id) {
-        this.id = id;
-    }
-
-    public Timestamp getCheckTime() {
-        return checkTime;
-    }
-
-    public void setCheckTime(Timestamp checkTime) {
-        this.checkTime = checkTime;
-    }
-
-    @Override
-    public String toString() {
-        return "Product{" +
-                "id=" + id +
-                ", price=" + price +
-                ", priceWithDiscount=" + priceWithDiscount +
-                ", lastPrice=" + lastPrice +
-                ", article='" + article + '\'' +
-                ", market=" + market.toString() +
-                ", checkTime=" + checkTime +
-                '}';
-    }
 }

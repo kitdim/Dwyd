@@ -7,19 +7,24 @@ import kit.corp.freebie.market.MarkerCheckYandex;
 import kit.corp.freebie.market.MarketCheckOzon;
 import kit.corp.freebie.market.MarketCheckWb;
 import kit.corp.model.Product;
-import kit.corp.repository.impl.ProductRepositoryInMemory;
+import kit.corp.model.dto.SaveNewProduct;
+import kit.corp.repository.ProductRepository;
+import lombok.RequiredArgsConstructor;
 import org.jsoup.nodes.Document;
+import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+@Service
+@RequiredArgsConstructor
 public class CheckService {
-    private static final ProductRepositoryInMemory productRepositoryInMemory = new ProductRepositoryInMemory();
+    private final ProductRepository productRepository;
 
-    public static void start() {
-        if (!productRepositoryInMemory.isEmpty()) {
-            List<Product> products = productRepositoryInMemory.getAll();
+    public void start() {
+        if (productRepository.count() > 0) {
+            List<Product> products = productRepository.findAll();
 
             for (Product product : products) {
                 MarketCheck check = getMarketCheck(product.getMarket());
@@ -28,22 +33,22 @@ public class CheckService {
                 Product checkProduct = check.getPrice(jsonNode);
 
                 Product checkPriceProduct = checkPrice(product, checkProduct);
-                productRepositoryInMemory.edit(checkPriceProduct);
+                edit(checkPriceProduct);
             }
         } else {
             System.out.println("Нечего проверять");
         }
     }
 
-    public void saveNew(MarketCheckType type, String article) {
+    public void saveNew(SaveNewProduct saveNewProduct) {
         Product product = new Product();
-        product.setMarket(type);
-        product.setArticle(article);
+        product.setMarket(saveNewProduct.marketCheckType());
+        product.setArticle(saveNewProduct.article());
 
-        productRepositoryInMemory.save(product);
+        productRepository.save(product);
     }
 
-    private static MarketCheck getMarketCheck(MarketCheckType type) {
+    private MarketCheck getMarketCheck(MarketCheckType type) {
         MarketCheck marketCheck;
         switch (type) {
             case YANDEX -> marketCheck = new MarkerCheckYandex();
@@ -54,7 +59,7 @@ public class CheckService {
         return marketCheck;
     }
 
-    private static Product checkPrice(Product product, Product checkProduct) {
+    private Product checkPrice(Product product, Product checkProduct) {
         String currentTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
         if (product.getCheckTime() == null) {
             product.setCheckTime(checkProduct.getCheckTime());
@@ -84,5 +89,17 @@ public class CheckService {
 
             return product;
         }
+    }
+
+    private void edit(Product checkPriceProduct) {
+        Product productFromDb = productRepository.findById(checkPriceProduct.getId())
+                .orElseThrow(() -> new RuntimeException("Not Found: " + checkPriceProduct.getId()));
+
+        productFromDb.setPrice(checkPriceProduct.getPrice());
+        productFromDb.setPriceWithDiscount(checkPriceProduct.getPriceWithDiscount());
+        productFromDb.setLastPrice(checkPriceProduct.getLastPrice());
+        productFromDb.setCheckTime(checkPriceProduct.getCheckTime());
+
+        productRepository.save(productFromDb);
     }
 }

@@ -4,11 +4,13 @@ import com.microsoft.playwright.*;
 import com.microsoft.playwright.options.WaitUntilState;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.springframework.stereotype.Component;
 
 import java.text.MessageFormat;
 
 import java.util.Arrays;
 
+@Component
 public class KitProxy {
     private static final String[] URLS = new String[]{
             "https://www.ozon.ru",
