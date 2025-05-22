@@ -1,15 +1,16 @@
 plugins {
-    id 'java'
+    id 'application'
     id 'org.springframework.boot' version '3.4.5'
     id 'io.spring.dependency-management' version '1.1.7'
+    id 'jacoco'
 }
 
 group = 'kit.corp'
 version = '1.0-SNAPSHOT'
 
-//application {
-//    mainClassName = "kit.corp.Main"
-//}
+application {
+    mainClassName = "kit.corp.Main"
+}
 
 configurations {
     compileOnly {
@@ -20,12 +21,36 @@ configurations {
 repositories {
     mavenCentral()
 }
+jacoco {
+    toolVersion = "0.8.13"
+}
+
+tasks.jacocoTestReport {
+    dependsOn test // Отчёт строится после выполнения тестов
+    reports {
+        xml.required = true // Включить XML (нужно для SonarQube)
+        csv.required = false // Отключить CSV
+        html.required = true // Включить HTML-отчёт
+        html.outputLocation = file("$buildDir/reports/jacoco") // Путь для HTML
+    }
+}
+
+// Если нужно покрытие для интеграционных тестов
+tasks.jacocoTestCoverageVerification {
+    violationRules {
+        rule {
+            limit {
+                minimum = 0.8 // Минимальный требуемый процент покрытия
+            }
+        }
+    }
+}
 
 dependencies {
     implementation 'org.jsoup:jsoup:1.18.3'
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.18.2'
     implementation 'com.microsoft.playwright:playwright:1.51.0'
-
+    implementation("org.instancio:instancio-junit:3.3.0")
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
     implementation 'org.springframework.boot:spring-boot-starter-web'
@@ -37,6 +62,7 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    testImplementation 'org.jacoco:org.jacoco.core:0.8.13'
 }
 
 tasks.named('test') {
