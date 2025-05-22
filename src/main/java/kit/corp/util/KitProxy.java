@@ -21,7 +21,7 @@ public class KitProxy {
     public static Document executeBrowserAutomation(String article, String marketName) {
         try (Playwright playwright = Playwright.create()) {
             Browser browser = playwright.chromium().launch(new BrowserType.LaunchOptions()
-                    .setHeadless(false)
+                    .setHeadless(true)
                     .setArgs(Arrays.asList(
                             "--disable-blink-features=AutomationControlled",
                             "--start-maximized",

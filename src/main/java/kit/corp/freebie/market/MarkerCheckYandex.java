@@ -38,7 +38,7 @@ public class MarkerCheckYandex implements MarketCheck {
             Elements verifiedBadges = extractValue.select(val);
             for (var elem : verifiedBadges) {
                 String needBlock = elem.text();
-                if (needBlock.contains(article)) {
+                if (needBlock.contains("gci") && needBlock.contains(article)) {
                     ObjectMapper objectMapper = new ObjectMapper();
                     try {
                         return objectMapper.readTree(needBlock);
