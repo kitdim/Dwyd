@@ -6,7 +6,6 @@ import kit.corp.model.dto.SaveNewProduct;
 import kit.corp.repository.ProductRepository;
 import org.instancio.Instancio;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -40,7 +39,7 @@ class MarketCheckControllerTest {
 
     @ParameterizedTest
     @MethodSource("provideTestGoodData")
-    public void startTestStatusIsOk(MarketCheckType marketCheckType, String article) throws Exception {
+    public void startTestStatusIsOk(final MarketCheckType marketCheckType, final String article) throws Exception {
         SaveNewProduct newProduct = Instancio.of(SaveNewProduct.class)
                 .set(field("article"), article)
                 .set(field("marketCheckType"), marketCheckType)
@@ -61,7 +60,7 @@ class MarketCheckControllerTest {
 
     @ParameterizedTest
     @MethodSource("provideTestGoodData")
-    public void saveTestStatusIsOk(MarketCheckType marketCheckType, String article) throws Exception {
+    public void saveTestStatusIsOk(final MarketCheckType marketCheckType, final String article) throws Exception {
         System.out.println("Testing: marketCheckType=" + marketCheckType + ", article=" + article);
         SaveNewProduct newProduct = Instancio.of(SaveNewProduct.class)
                 .set(field("article"), article)

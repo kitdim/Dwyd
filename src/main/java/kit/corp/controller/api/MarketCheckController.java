@@ -25,7 +25,7 @@ public class MarketCheckController {
 
     @PostMapping("/save")
     @ResponseStatus(HttpStatus.OK)
-    public void save(@Valid @RequestBody SaveNewProduct saveProduct) {
+    public void save(@Valid @RequestBody final SaveNewProduct saveProduct) {
         checkService.saveNew(saveProduct);
     }
 }

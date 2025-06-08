@@ -27,8 +27,8 @@ public class CheckService {
             List<Product> products = productRepository.findAll();
 
             for (Product product : products) {
-                MarketCheck check = getMarketCheck(product.getMarket());
-                Document document = check.fetch(product.getArticle());
+                MarketCheck check = getMarketCheck(product.getMarket(), product.getArticle());
+                Document document = check.fetch();
                 JsonNode jsonNode = check.extract(document);
                 Product checkProduct = check.getPrice(jsonNode);
 
@@ -40,7 +40,7 @@ public class CheckService {
         }
     }
 
-    public void saveNew(SaveNewProduct saveNewProduct) {
+    public void saveNew(final SaveNewProduct saveNewProduct) {
         Product product = new Product();
         product.setMarket(saveNewProduct.marketCheckType());
         product.setArticle(saveNewProduct.article());
@@ -48,18 +48,15 @@ public class CheckService {
         productRepository.save(product);
     }
 
-    private MarketCheck getMarketCheck(MarketCheckType type) {
-        MarketCheck marketCheck;
-        switch (type) {
-            case YANDEX -> marketCheck = new MarkerCheckYandex();
-            case OZON -> marketCheck = new MarketCheckOzon();
-            case WB -> marketCheck = new MarketCheckWb();
-            default -> throw new IllegalStateException("Unexpected value: " + type);
-        }
-        return marketCheck;
+    private MarketCheck getMarketCheck(final MarketCheckType type, final String article) {
+        return switch (type) {
+            case YANDEX -> new MarkerCheckYandex(article);
+            case OZON -> new MarketCheckOzon(article);
+            case WB -> new MarketCheckWb(article);
+        };
     }
 
-    private Product checkPrice(Product product, Product checkProduct) {
+    private Product checkPrice(final Product product, final Product checkProduct) {
         String currentTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
         if (product.getCheckTime() == null) {
             product.setCheckTime(checkProduct.getCheckTime());
@@ -91,7 +88,7 @@ public class CheckService {
         }
     }
 
-    private void edit(Product checkPriceProduct) {
+    private void edit(final Product checkPriceProduct) {
         Product productFromDb = productRepository.findById(checkPriceProduct.getId())
                 .orElseThrow(() -> new RuntimeException("Not Found: " + checkPriceProduct.getId()));
 

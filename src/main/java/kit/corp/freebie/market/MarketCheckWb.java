@@ -8,26 +8,25 @@ import kit.corp.freebie.MarketCheck;
 import kit.corp.freebie.MarketCheckType;
 import kit.corp.model.Product;
 import kit.corp.util.KitProxy;
+import lombok.RequiredArgsConstructor;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import org.springframework.stereotype.Component;
 
 import java.sql.Timestamp;
 import java.util.List;
 import java.util.Objects;
 
-@Component
+@RequiredArgsConstructor
 public class MarketCheckWb implements MarketCheck {
     private static final List<String> CSS_QUERY = List.of(
             ".price-block__content"
     );
-    private String article;
+    private final String article;
 
     @Override
-    public Document fetch(String article) {
-        this.article = article;
-        return KitProxy.executeBrowserAutomation(article, MarketCheckType.WB.name());
+    public Document fetch() {
+        return new KitProxy().executeBrowserAutomation(this.article, MarketCheckType.WB.name());
     }
 
     @Override
@@ -81,8 +80,13 @@ public class MarketCheckWb implements MarketCheck {
     public Product getPrice(JsonNode node) {
         Product product = new Product();
 
-        double greenPrice = Double.parseDouble(node.get("finalPrice").asText().replaceAll("[^0-9]", ""));
-        double priceWithDiscount = Double.parseDouble(node.get("walletPrice").asText().replaceAll("[^0-9]", ""));
+        double greenPrice = Double.parseDouble(node.get("finalPrice")
+                        .asText()
+                        .replaceAll("[^0-9]", "")
+        );
+        double priceWithDiscount = Double.parseDouble(node.get("walletPrice")
+                .asText().replaceAll("[^0-9]", "")
+        );
 
         product.setPrice(priceWithDiscount);
         product.setPriceWithDiscount(greenPrice);

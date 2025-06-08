@@ -7,28 +7,28 @@ import kit.corp.freebie.MarketCheck;
 import kit.corp.freebie.MarketCheckType;
 import kit.corp.model.Product;
 import kit.corp.util.KitProxy;
+import lombok.RequiredArgsConstructor;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
-import org.springframework.stereotype.Component;
 
 import java.sql.Timestamp;
 import java.util.List;
 
-@Component
+@RequiredArgsConstructor
 public class MarketCheckOzon implements MarketCheck {
     private static final List<String> CSS_QUERY = List.of(
             "script[type='application/ld+json']"
     );
-    private String article;
+    private final String article;
+
 
     @Override
-    public Document fetch(String article) {
-        this.article = article;
-        return KitProxy.executeBrowserAutomation(article, MarketCheckType.OZON.name());
+    public Document fetch() {
+        return new KitProxy().executeBrowserAutomation(this.article, MarketCheckType.OZON.name());
     }
 
     @Override
-    public JsonNode extract(Document extractValue) {
+    public JsonNode extract(final Document extractValue) {
         for (String val : CSS_QUERY) {
             Elements verifiedBadges = extractValue.select(val);
             for (var elem : verifiedBadges) {
@@ -47,7 +47,7 @@ public class MarketCheckOzon implements MarketCheck {
     }
 
     @Override
-    public Product getPrice(JsonNode node) {
+    public Product getPrice(final JsonNode node) {
         Product product = new Product();
         double priceWithDiscount = node.path("offers").path("price").asDouble();
 
