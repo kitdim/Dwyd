@@ -5,26 +5,25 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import kit.corp.freebie.MarketCheck;
 import kit.corp.model.Product;
+import lombok.RequiredArgsConstructor;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
-import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.List;
 
-@Component
+@RequiredArgsConstructor
 public class MarkerCheckYandex implements MarketCheck {
     private static final String URL = "https://market.yandex.ru/pr/";
     private static final List<String> CSS_QUERY = List.of(
             "div[data-apiary-widget-id='/content/page/fancyPage/defaultPage/verifiedBadge']",
             "noframes[data-apiary='patch']");
-    private String article;
+    private final String article;
 
     @Override
-    public Document fetch(String article) {
-        this.article = article;
+    public Document fetch() {
         try {
             return Jsoup.connect(URL.concat(this.article)).get();
         } catch (IOException e) {
@@ -33,7 +32,7 @@ public class MarkerCheckYandex implements MarketCheck {
     }
 
     @Override
-    public JsonNode extract(Document extractValue) {
+    public JsonNode extract(final Document extractValue) {
         for (String val : CSS_QUERY) {
             Elements verifiedBadges = extractValue.select(val);
             for (var elem : verifiedBadges) {
@@ -52,10 +51,17 @@ public class MarkerCheckYandex implements MarketCheck {
     }
 
     @Override
-    public Product getPrice(JsonNode node) {
+    public Product getPrice(final JsonNode node) {
         Product product = new Product();
-        double priceWithCard = node.findValue("prices").findValue("greenPrice").findValue("price").findValue("value").asDouble();
-        double priceWithoutCard = node.findValue("prices").findValue("price").findValue("value").asDouble();
+        double priceWithCard = node.findValue("prices")
+                .findValue("greenPrice")
+                .findValue("price")
+                .findValue("value")
+                .asDouble();
+        double priceWithoutCard = node.findValue("prices")
+                .findValue("price")
+                .findValue("value")
+                .asDouble();
 
         product.setPrice(priceWithoutCard);
         product.setLastPrice(priceWithoutCard);

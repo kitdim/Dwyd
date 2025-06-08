@@ -1,8 +1,11 @@
 package kit.corp.util;
 
-import com.microsoft.playwright.*;
+import com.microsoft.playwright.Browser;
+import com.microsoft.playwright.BrowserContext;
+import com.microsoft.playwright.BrowserType;
+import com.microsoft.playwright.Page;
+import com.microsoft.playwright.Playwright;
 import com.microsoft.playwright.options.WaitUntilState;
-import kit.corp.freebie.MarketCheckType;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.springframework.stereotype.Component;
@@ -13,6 +16,9 @@ import java.util.Arrays;
 
 @Component
 public class KitProxy {
+    private static final String USER_AGENT = """
+            Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36""";
+
     private static final String[] URLS = new String[]{
             "https://www.ozon.ru",
             "https://www.ozon.ru/product/{0}",
@@ -25,14 +31,10 @@ public class KitProxy {
                     "--disable-blink-features=AutomationControlled",
                     "--no-sandbox",
                     "--disable-dev-shm-usage",
-                    "--single-process"
-            ));
+                    "--single-process")
+            );
 
-    private static final Browser.NewContextOptions CONTEXT_OPTIONS = new Browser.NewContextOptions()
-            .setUserAgent("Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36")
-            .setViewportSize(1600, 900)
-            .setBypassCSP(true)
-            .setIgnoreHTTPSErrors(true);
+    private static final Browser.NewContextOptions CONTEXT_OPTIONS = new Browser.NewContextOptions().setUserAgent(USER_AGENT).setViewportSize(1600, 900).setBypassCSP(true).setIgnoreHTTPSErrors(true);
 
     public static Document executeBrowserAutomation(String article, String marketName) {
         try (Playwright playwright = Playwright.create()) {
@@ -45,9 +47,7 @@ public class KitProxy {
             executeNavigateToMainPage(page, marketName);
             humanLikeInteraction(page);
 
-            String productUrl = marketName.equals("OZON") ?
-                    MessageFormat.format(URLS[1], article) :
-                    MessageFormat.format(URLS[3], article);
+            String productUrl = marketName.equals("OZON") ? MessageFormat.format(URLS[1], article) : MessageFormat.format(URLS[3], article);
 
             executeNavigateToProductPage(page, productUrl, marketName);
 
@@ -57,16 +57,12 @@ public class KitProxy {
 
     private static void executeNavigateToMainPage(Page page, String marketName) {
         if (marketName.equals("WB")) {
-            page.navigate(
-                    URLS[2],
-                    new Page.NavigateOptions().setWaitUntil(WaitUntilState.DOMCONTENTLOADED)
-            );
+            page.navigate(URLS[2], new Page.NavigateOptions().setWaitUntil(WaitUntilState.DOMCONTENTLOADED));
         }
     }
 
     private static void executeNavigateToProductPage(Page page, String productUrl, String marketName) {
-        page.navigate(productUrl, new Page.NavigateOptions()
-                .setWaitUntil(WaitUntilState.NETWORKIDLE));
+        page.navigate(productUrl, new Page.NavigateOptions().setWaitUntil(WaitUntilState.NETWORKIDLE));
     }
 
     private static void humanLikeInteraction(Page page) {
