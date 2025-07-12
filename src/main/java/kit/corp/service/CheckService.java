@@ -1,18 +1,26 @@
 package kit.corp.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import kit.corp.config.TaskConfiguration;
 import kit.corp.freebie.MarketCheck;
 import kit.corp.freebie.MarketCheckType;
 import kit.corp.freebie.market.MarkerCheckYandex;
 import kit.corp.freebie.market.MarketCheckOzon;
 import kit.corp.freebie.market.MarketCheckWb;
-import kit.corp.model.Product;
-import kit.corp.model.dto.SaveNewProduct;
+import kit.corp.model.product.Product;
+import kit.corp.model.product.dto.SaveNewProduct;
+import kit.corp.model.task.TaskExecution;
+import kit.corp.model.task.TaskStatus;
+import kit.corp.model.task.dto.TaskFinish;
+import kit.corp.model.task.dto.TaskStart;
 import kit.corp.repository.ProductRepository;
+import kit.corp.repository.TaskExecutionRepository;
 import lombok.RequiredArgsConstructor;
 import org.jsoup.nodes.Document;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -21,23 +29,77 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CheckService {
     private final ProductRepository productRepository;
+    private final TaskExecutionRepository taskExecutionRepository;
+    private final TaskConfiguration taskConfiguration;
 
+    @Scheduled()
     public void start() {
-        if (productRepository.count() > 0) {
-            List<Product> products = productRepository.findAll();
+        String taskName = taskConfiguration.getStartTask().getTaskName();
+        List<String> taskParams = List.of(
+                taskConfiguration.getStartTask().getTimeDelay().toString(),
+                String.valueOf(taskConfiguration.isNeedAuth())
+        );
+        Timestamp startTime = new Timestamp(System.currentTimeMillis());
+        TaskStart startTask = new TaskStart(taskName, TaskStatus.RUNNING, taskParams, startTime);
 
+        TaskExecution taskExecution = new TaskExecution();
+        taskExecution.setTaskStatus(startTask.taskStatus());
+        taskExecution.setStartTime(startTask.startTime());
+        taskExecution.setStartParams(String.join(";", startTask.taskParams()));
+        taskExecution.setTaskName(startTask.taskName());
+
+        taskExecutionRepository.save(taskExecution);
+
+        long countElems = productRepository.count();
+        long countUpdateElems = 0;
+        long countErrors = 0;
+
+        if (countElems > 0) {
+            List<Product> products = productRepository.findAll();
             for (Product product : products) {
                 MarketCheck check = getMarketCheck(product.getMarket(), product.getArticle());
-                Document document = check.fetch();
-                JsonNode jsonNode = check.extract(document);
-                Product checkProduct = check.getPrice(jsonNode);
+                Document document;
+                JsonNode jsonNode;
+                Product checkProduct;
+
+                try {
+                    document = check.fetch();
+                    jsonNode = check.extract(document);
+                    checkProduct = check.getPrice(jsonNode);
+                } catch (Exception e) {
+                    countErrors++;
+                    System.out.println(product.getArticle() + " with error: " + e.getMessage());
+                    continue;
+                }
 
                 Product checkPriceProduct = checkPrice(product, checkProduct);
                 edit(checkPriceProduct);
+                countUpdateElems++;
             }
         } else {
             System.out.println("Нечего проверять");
         }
+
+        String description = """
+                Count elems: {%d} \n
+                Count error: {%d} \n
+                Count update: {%d} \n
+                """.formatted(countElems, countErrors, countUpdateElems);
+
+        Timestamp finishTime = new Timestamp(System.currentTimeMillis());
+        TaskFinish taskFinish;
+
+        if (countErrors > 0) {
+            taskFinish = new TaskFinish(description, TaskStatus.ERROR, finishTime);
+        } else {
+            taskFinish = new TaskFinish(description, TaskStatus.FINISH, finishTime);
+        }
+
+        taskExecution.setFinishTime(taskFinish.finishTime());
+        taskExecution.setDescription(taskFinish.description());
+        taskExecution.setTaskStatus(taskFinish.taskStatus());
+
+        taskExecutionRepository.save(taskExecution);
     }
 
     public void saveNew(final SaveNewProduct saveNewProduct) {

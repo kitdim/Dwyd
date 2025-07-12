@@ -1,4 +1,4 @@
-package kit.corp.model;
+package kit.corp.model.product;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

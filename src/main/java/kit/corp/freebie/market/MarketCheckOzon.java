@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import kit.corp.freebie.MarketCheck;
 import kit.corp.freebie.MarketCheckType;
-import kit.corp.model.Product;
+import kit.corp.model.product.Product;
 import kit.corp.util.KitProxy;
 import lombok.RequiredArgsConstructor;
 import org.jsoup.nodes.Document;

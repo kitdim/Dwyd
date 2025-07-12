@@ -1,7 +1,7 @@
 package kit.corp.controller.api;
 
 import jakarta.validation.Valid;
-import kit.corp.model.dto.SaveNewProduct;
+import kit.corp.model.product.dto.SaveNewProduct;
 import kit.corp.service.CheckService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

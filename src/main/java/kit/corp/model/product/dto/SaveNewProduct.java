@@ -1,4 +1,4 @@
-package kit.corp.model.dto;
+package kit.corp.model.product.dto;
 
 import jakarta.validation.constraints.NotNull;
 import kit.corp.freebie.MarketCheckType;
