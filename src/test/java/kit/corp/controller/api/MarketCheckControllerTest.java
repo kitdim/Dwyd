@@ -2,7 +2,7 @@ package kit.corp.controller.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import kit.corp.freebie.MarketCheckType;
-import kit.corp.model.dto.SaveNewProduct;
+import kit.corp.model.product.dto.SaveNewProduct;
 import kit.corp.repository.ProductRepository;
 import org.instancio.Instancio;
 import org.junit.jupiter.api.BeforeEach;

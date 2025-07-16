@@ -41,3 +41,13 @@ kitproxy:
     second-wait-timeout: [1000, 2000]
     mouse-wheel: [0, 300]
     third-wait-timeout: 1500
+
+# Настройки для задач
+tasks:
+  save:
+    task-name: save
+    check-after-save: false
+  start:
+    task-name: start
+    time-delay: 5
+  need-auth: false
