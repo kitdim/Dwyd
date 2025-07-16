@@ -1,7 +1,7 @@
 -- liquibase formatted sql
 
 -- changeset kitdim:1.4-add-task-executions
-CREATE TABLE executions (
+CREATE TABLE task_executions (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     task_name VARCHAR(255),
     start_time TIMESTAMP,
@@ -11,4 +11,4 @@ CREATE TABLE executions (
     description VARCHAR(255)
 );
 
--- rollback DROP TABLE executions;
+-- rollback DROP TABLE task-executions;

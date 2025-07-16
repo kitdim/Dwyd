@@ -1,8 +1,0 @@
-tasks:
-  need-auth: false
-  save:
-    name: save
-    check-after-save: false
-  start:
-    name: start
-    time-delay: 5m

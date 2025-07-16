@@ -1,8 +1,7 @@
 package kit.corp.model.task;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.sql.Timestamp;
 
@@ -10,8 +9,11 @@ import static jakarta.persistence.GenerationType.IDENTITY;
 
 @Entity
 @Table(name = "task_executions")
+@Builder
 @Getter
 @Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class TaskExecution {
     @Id
     @GeneratedValue(strategy = IDENTITY)
