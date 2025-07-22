@@ -4,7 +4,7 @@ spring:
   jpa:
     hibernate:
       ddl-auto: validate  # Liquibase управляет схемой
-    show-sql: true
+    show-sql: false
   liquibase:
       change-log: classpath:db/changelog/db.changelog-master.xml
   h2:
@@ -13,6 +13,8 @@ spring:
       path: /h2-console
   profiles:
     active: dev
+  main:
+    banner-mode: off
 
 # Настройки для прокси
 kitproxy:

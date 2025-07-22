@@ -14,6 +14,7 @@ import kit.corp.model.task.TaskStatus;
 import kit.corp.repository.ProductRepository;
 import kit.corp.repository.TaskExecutionRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.jsoup.nodes.Document;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -26,6 +27,7 @@ import java.util.concurrent.TimeUnit;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class CheckService {
     private final ProductRepository productRepository;
     private final TaskExecutionRepository taskExecutionRepository;
@@ -35,10 +37,9 @@ public class CheckService {
     public void start() {
         String taskName = taskConfiguration.getStart().getTaskName();
         if (taskExecutionRepository.isRunningTask(taskName, TaskStatus.RUNNING)) {
-            System.out.println(taskName + " isn't completed yet.");
+            log.warn("Task {} isn't completed yet.", taskName);
             return;
         }
-
         TaskExecution taskExecution = createTaskExecution(taskName);
         taskExecutionRepository.save(taskExecution);
 
@@ -60,7 +61,7 @@ public class CheckService {
                 String.valueOf(taskConfiguration.getStart().getTimeDelay()),
                 String.valueOf(taskConfiguration.isNeedAuth())
         );
-
+        log.info("Task {} is running with params {}.", taskName, taskParams);
         return TaskExecution.builder()
                 .taskName(taskName)
                 .taskStatus(TaskStatus.RUNNING)
@@ -86,13 +87,15 @@ public class CheckService {
                     Product updatedProduct = checkPrice(product, checkProduct);
                     edit(updatedProduct);
                     countUpdateElems++;
+
+                    log.debug("Processed by product: {}", updatedProduct);
                 } catch (Exception e) {
                     countErrors++;
-                    System.out.printf("%s with error: %s%n", product.getArticle(), e.getMessage());
+                    log.error("{} with error: {}", product.getArticle(), e.getMessage());
                 }
             }
         } else {
-            System.out.println("Nothing to check");
+            log.warn("Nothing to check.");
         }
 
         return new TaskResult(countElems, countUpdateElems, countErrors);
@@ -110,6 +113,7 @@ public class CheckService {
         taskExecution.setDescription(description);
         taskExecution.setTaskStatus(status);
 
+        log.info(description);
         taskExecutionRepository.save(taskExecution);
     }
 
@@ -129,8 +133,8 @@ public class CheckService {
             product.setPriceWithDiscount(checkProduct.getPriceWithDiscount());
             product.setPrice(checkProduct.getPrice());
 
-            System.out.println("Текущее время: " + currentTime);
-            System.out.println(product);
+            log.info("Time: {}", currentTime);
+            log.debug("Check product: {}", product);
 
             return product;
         }
@@ -139,15 +143,12 @@ public class CheckService {
             product.setPrice(checkProduct.getPrice());
             product.setLastPrice(checkProduct.getLastPrice());
             product.setPriceWithDiscount(checkProduct.getPriceWithDiscount());
-
-            System.out.println("Текущее время: " + currentTime);
-            System.out.println(product + " цена поменялась.");
+            log.debug("Check product: {}, price update.", product);
 
             return product;
         } else {
             product.setCheckTime(checkProduct.getCheckTime());
-            System.out.println("Текущее время: " + currentTime);
-            System.out.println(product + " цена не поменялась.");
+            log.debug("Check product: {}, price not update.", product);
 
             return product;
         }
@@ -163,6 +164,7 @@ public class CheckService {
         productFromDb.setCheckTime(checkPriceProduct.getCheckTime());
 
         productRepository.save(productFromDb);
+        log.debug("Save product: {}.", productFromDb);
     }
 
     private record TaskResult(long total, long updates, long errors) {}

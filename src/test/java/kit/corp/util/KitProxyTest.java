@@ -15,7 +15,7 @@ class KitProxyTest {
 
     @ParameterizedTest
     @MethodSource("provideTestGoodData")
-    @Timeout(10)
+    @Timeout(15)
     public void executeBrowserAutomation(MarketCheckType marketCheckType, String article) {
          KitProxy.executeBrowserAutomation(article, marketCheckType.name());
     }

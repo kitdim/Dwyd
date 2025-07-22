@@ -33,4 +33,17 @@ public class Product {
     private MarketCheckType market;
     @Column(name = "check_time")
     private Timestamp checkTime;
+
+    @Override
+    public String toString() {
+        return "Product{" +
+                "id=" + id +
+                ", price=" + price +
+                ", priceWithDiscount=" + priceWithDiscount +
+                ", lastPrice=" + lastPrice +
+                ", article='" + article + '\'' +
+                ", market=" + market +
+                ", checkTime=" + checkTime +
+                '}';
+    }
 }
