@@ -41,7 +41,7 @@ bin/
 
 ### Mac OS ###
 .DS_Store
-/bdH2/prodDb.mv.db
-/bdH2/prodDb.trace.db
-/bdH2/testdb.mv.db
-/bdH2/testdb.trace.db
+
+### bd&logs ###
+/bdH2/*
+/logs/*
