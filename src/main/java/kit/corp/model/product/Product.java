@@ -29,6 +29,8 @@ public class Product {
     @Column(name = "last_price")
     private double lastPrice;
     private String article;
+    @Column(name = "short_link")
+    private String shortLink;
     @Enumerated(EnumType.STRING)
     private MarketCheckType market;
     @Column(name = "check_time")
@@ -41,6 +43,7 @@ public class Product {
                 ", price=" + price +
                 ", priceWithDiscount=" + priceWithDiscount +
                 ", lastPrice=" + lastPrice +
+                ", shortLink=" + shortLink +
                 ", article='" + article + '\'' +
                 ", market=" + market +
                 ", checkTime=" + checkTime +

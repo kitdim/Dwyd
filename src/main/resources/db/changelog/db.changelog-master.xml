@@ -8,4 +8,5 @@
     <include file="sql/1.2-drop-table.sql" relativeToChangelogFile="true"/>
     <include file="sql/1.3-initial-schema.sql" relativeToChangelogFile="true"/>
     <include file="sql/1.4-add-task-executions.sql" relativeToChangelogFile="true"/>
+    <include file="sql/1.5-add-field-shortLink.sql" relativeToChangelogFile="true"/>
 </databaseChangeLog>

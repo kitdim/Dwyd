@@ -52,6 +52,7 @@ public class CheckService {
         Product product = new Product();
         product.setMarket(saveNewProduct.marketCheckType());
         product.setArticle(saveNewProduct.article());
+        product.setShortLink(saveNewProduct.shortLink());
 
         productRepository.save(product);
     }
@@ -79,7 +80,7 @@ public class CheckService {
             List<Product> products = productRepository.findAll();
             for (Product product : products) {
                 try {
-                    MarketCheck check = getMarketCheck(product.getMarket(), product.getArticle());
+                    MarketCheck check = getMarketCheck(product.getMarket(), product.getArticle(), product.getShortLink());
                     Document document = check.fetch();
                     JsonNode jsonNode = check.extract(document);
                     Product checkProduct = check.getPrice(jsonNode);
@@ -117,9 +118,9 @@ public class CheckService {
         taskExecutionRepository.save(taskExecution);
     }
 
-    private MarketCheck getMarketCheck(final MarketCheckType type, final String article) {
+    private MarketCheck getMarketCheck(final MarketCheckType type, final String article, final String shortLink) {
         return switch (type) {
-            case YANDEX -> new MarkerCheckYandex(article);
+            case YANDEX -> new MarkerCheckYandex(article, shortLink);
             case OZON -> new MarketCheckOzon(article);
             case WB -> new MarketCheckWb(article);
         };
