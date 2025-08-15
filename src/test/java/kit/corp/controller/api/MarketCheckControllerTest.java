@@ -39,10 +39,11 @@ class MarketCheckControllerTest {
 
     @ParameterizedTest
     @MethodSource("provideTestGoodData")
-    public void startTestStatusIsOk(final MarketCheckType marketCheckType, final String article) throws Exception {
+    public void startTestStatusIsOk(final MarketCheckType marketCheckType, final String article, final String shortLink) throws Exception {
         SaveNewProduct newProduct = Instancio.of(SaveNewProduct.class)
                 .set(field("article"), article)
                 .set(field("marketCheckType"), marketCheckType)
+                .set(field("shortLink"), shortLink)
                 .create();
 
         MockHttpServletRequestBuilder requestSave = post("/api/marketCheck/v1/save")
@@ -60,11 +61,11 @@ class MarketCheckControllerTest {
 
     @ParameterizedTest
     @MethodSource("provideTestGoodData")
-    public void saveTestStatusIsOk(final MarketCheckType marketCheckType, final String article) throws Exception {
-        System.out.println("Testing: marketCheckType=" + marketCheckType + ", article=" + article);
+    public void saveTestStatusIsOk(final MarketCheckType marketCheckType, final String article, final String shortLink) throws Exception {
         SaveNewProduct newProduct = Instancio.of(SaveNewProduct.class)
                 .set(field("article"), article)
                 .set(field("marketCheckType"), marketCheckType)
+                .set(field("shortLink"), shortLink)
                 .create();
 
         MockHttpServletRequestBuilder request = post("/api/marketCheck/v1/save")
@@ -77,9 +78,9 @@ class MarketCheckControllerTest {
 
     public static Stream<Arguments> provideTestGoodData() {
         return Stream.of(
-                Arguments.of(MarketCheckType.OZON, "856552942"),
-                Arguments.of(MarketCheckType.YANDEX, "5891275308"),
-                Arguments.of(MarketCheckType.WB, "239109987")
+                Arguments.of(MarketCheckType.OZON, "856552942", ""),
+                Arguments.of(MarketCheckType.YANDEX, "103797360000", "7PwnE2"),
+                Arguments.of(MarketCheckType.WB, "239109987", "")
         );
     }
 }
