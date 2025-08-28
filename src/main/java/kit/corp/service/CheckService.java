@@ -92,7 +92,7 @@ public class CheckService {
                     log.debug("Processed by product: {}", updatedProduct);
                 } catch (Exception e) {
                     countErrors++;
-                    log.error("{} with error: {}", product.getArticle(), e.getMessage());
+                    log.error("{} with error: {}.\nStack trace:", product.getArticle(), e.getMessage(), e);
                 }
             }
         } else {
