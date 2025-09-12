@@ -79,7 +79,7 @@ class MarketCheckControllerTest {
     public static Stream<Arguments> provideTestGoodData() {
         return Stream.of(
                 Arguments.of(MarketCheckType.OZON, "856552942", ""),
-                Arguments.of(MarketCheckType.YANDEX, "103797360000", "7PwnE2"),
+                Arguments.of(MarketCheckType.YANDEX, "103797360000", "https://market.yandex.ru/cc/7aVTbX"),
                 Arguments.of(MarketCheckType.WB, "239109987", "")
         );
     }

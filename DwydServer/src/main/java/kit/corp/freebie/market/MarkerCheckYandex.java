@@ -26,7 +26,7 @@ public class MarkerCheckYandex implements MarketCheck {
     @Override
     public Document fetch() {
         try {
-            return Jsoup.connect(URL.concat(shortLink)).get();
+            return Jsoup.connect(shortLink).get();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
