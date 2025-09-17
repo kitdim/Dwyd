@@ -16,34 +16,6 @@ spring:
   main:
     banner-mode: off
 
-# Настройки для прокси
-kitproxy:
-  urls-ozon:
-    - "https://www.ozon.ru"
-    - "https://www.ozon.ru/product/{0}"
-  urls-wb:
-    - "https://www.wildberries.ru"
-    - "https://www.wildberries.ru/catalog/{0}/detail.aspx"
-  browser-option:
-    headless: true
-    args:
-    - "--disable-blink-features=AutomationControlled"
-    - "--no-sandbox"
-    - "--disable-dev-shm-usage"
-    - "--single-process"
-  context-option:
-    user-agent: "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36"
-    view-port-size: [1600, 900]
-    bypass-csp: true
-    ignore-https-errors: true
-  init-script: "Object.defineProperty(navigator, 'webdriver', {get: () => undefined})"
-  human-like-interaction:
-    first-wait-timeout: [2000, 3000]
-    mouse-move: [100, 200]
-    second-wait-timeout: [1000, 2000]
-    mouse-wheel: [0, 300]
-    third-wait-timeout: 1500
-
 # Настройки для задач
 tasks:
   save:

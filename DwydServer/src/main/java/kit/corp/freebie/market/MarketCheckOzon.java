@@ -15,6 +15,7 @@ import java.sql.Timestamp;
 import java.util.List;
 
 @RequiredArgsConstructor
+@Deprecated
 public class MarketCheckOzon implements MarketCheck {
     private static final List<String> CSS_QUERY = List.of(
             "script[type='application/ld+json']"
