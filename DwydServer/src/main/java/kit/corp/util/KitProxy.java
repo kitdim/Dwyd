@@ -15,7 +15,7 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-@Component
+@Deprecated
 public class KitProxy {
     private static final String USER_AGENT = System.getProperty("os.name").toLowerCase().contains("linux")
             ? "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36..."

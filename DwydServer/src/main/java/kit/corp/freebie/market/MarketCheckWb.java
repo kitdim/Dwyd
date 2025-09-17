@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Objects;
 
 @RequiredArgsConstructor
+@Deprecated
 public class MarketCheckWb implements MarketCheck {
     private static final List<String> CSS_QUERY = List.of(
             ".price-block__content"

@@ -9,6 +9,7 @@ import java.util.List;
 @Component
 @ConfigurationProperties(prefix = "kitproxy")
 @Data
+@Deprecated
 public class KitProxyConfiguration {
     private List<String> urlsOzon;
     private List<String> urlsWb;

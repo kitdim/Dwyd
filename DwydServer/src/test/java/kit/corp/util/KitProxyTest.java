@@ -1,6 +1,7 @@
 package kit.corp.util;
 
 import kit.corp.freebie.MarketCheckType;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Timeout;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -11,6 +12,7 @@ import java.util.stream.Stream;
 
 
 @SpringBootTest
+@Disabled("Test off")
 class KitProxyTest {
 
     @ParameterizedTest

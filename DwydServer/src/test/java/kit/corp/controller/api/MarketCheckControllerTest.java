@@ -3,9 +3,7 @@ package kit.corp.controller.api;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import kit.corp.freebie.MarketCheckType;
 import kit.corp.model.product.dto.SaveNewProduct;
-import kit.corp.repository.ProductRepository;
 import org.instancio.Instancio;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -29,15 +27,8 @@ class MarketCheckControllerTest {
     private MockMvc mockMvc;
     @Autowired
     private ObjectMapper om;
-    @Autowired
-    private ProductRepository productRepository;
 
-    @BeforeEach
-    public void init() {
-        productRepository.deleteAll();
-    }
-
-    @ParameterizedTest
+    @ParameterizedTest(name = "Test by start method with data: {0}")
     @MethodSource("provideTestGoodData")
     public void startTestStatusIsOk(final MarketCheckType marketCheckType, final String article, final String shortLink) throws Exception {
         SaveNewProduct newProduct = Instancio.of(SaveNewProduct.class)
@@ -59,7 +50,7 @@ class MarketCheckControllerTest {
                 .andExpect(status().isAccepted());
     }
 
-    @ParameterizedTest
+    @ParameterizedTest(name = "Test by save method with data: {0}")
     @MethodSource("provideTestGoodData")
     public void saveTestStatusIsOk(final MarketCheckType marketCheckType, final String article, final String shortLink) throws Exception {
         SaveNewProduct newProduct = Instancio.of(SaveNewProduct.class)
@@ -78,9 +69,8 @@ class MarketCheckControllerTest {
 
     public static Stream<Arguments> provideTestGoodData() {
         return Stream.of(
-                Arguments.of(MarketCheckType.OZON, "856552942", ""),
                 Arguments.of(MarketCheckType.YANDEX, "103797360000", "https://market.yandex.ru/cc/7aVTbX"),
-                Arguments.of(MarketCheckType.WB, "239109987", "")
-        );
+                Arguments.of(MarketCheckType.YANDEX, "4514870086", "https://market.yandex.ru/cc/7cDixu"),
+                Arguments.of(MarketCheckType.YANDEX, "103577166537", "https://market.yandex.ru/cc/7bbmmd"));
     }
 }

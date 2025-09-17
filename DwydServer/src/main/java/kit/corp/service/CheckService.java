@@ -121,8 +121,7 @@ public class CheckService {
     private MarketCheck getMarketCheck(final MarketCheckType type, final String article, final String shortLink) {
         return switch (type) {
             case YANDEX -> new MarkerCheckYandex(article, shortLink);
-            case OZON -> new MarketCheckOzon(article);
-            case WB -> new MarketCheckWb(article);
+            default -> throw new IllegalArgumentException(type + " is not support.");
         };
     }
 

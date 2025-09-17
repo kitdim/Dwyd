@@ -26,24 +26,42 @@ jacoco {
     toolVersion = "0.8.13"
 }
 
+def jacocoExcludes = [
+        '**/kit/corp/freebie/market/MarketCheckOzon.class',
+        '**/kit/corp/freebie/market/MarketCheckWb.class',
+        '**/kit/corp/util/KitProxy.class'
+]
+
 tasks.jacocoTestReport {
-    dependsOn test // Отчёт строится после выполнения тестов
+    dependsOn test
     reports {
-        xml.required = true // Включить XML (нужно для SonarQube)
-        csv.required = false // Отключить CSV
-        html.required = true // Включить HTML-отчёт
-        html.outputLocation = file("$buildDir/reports/jacoco") // Путь для HTML
+        xml.required = true
+        csv.required = false
+        html.required = true
+        html.outputLocation = file("$buildDir/reports/jacoco")
+    }
+
+    // Правильное исключение классов
+    afterEvaluate {
+        classDirectories.setFrom(files(classDirectories.files.collect {
+            fileTree(dir: it, excludes: jacocoExcludes)
+        }))
     }
 }
 
-// Если нужно покрытие для интеграционных тестов
 tasks.jacocoTestCoverageVerification {
     violationRules {
         rule {
             limit {
-                minimum = 0.8 // Минимальный требуемый процент покрытия
+                minimum = 0.8
             }
         }
+    }
+
+    afterEvaluate {
+        classDirectories.setFrom(files(classDirectories.files.collect {
+            fileTree(dir: it, excludes: jacocoExcludes)
+        }))
     }
 }
 
