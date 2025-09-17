@@ -19,6 +19,7 @@ public class BotConfiguration {
     private Long adminId;
     private String welcomeMessage;
     private String helpMessage;
+    private String urlServer;
 
     private static final String CONFIG_FILE = "/bot.properties";
 
@@ -42,12 +43,14 @@ public class BotConfiguration {
             botToken = getRequiredProperty(properties, "bot.token");
             botUsername = getRequiredProperty(properties, "bot.username");
             botName = getRequiredProperty(properties, "bot.name");
+            urlServer = getRequiredProperty(properties, "server.url");
 
             validate();
 
             // Опциональные параметры
             adminId = getLongProperty(properties, "bot.admin.id");
-            welcomeMessage = properties.getProperty("bot.welcome.message", "Добро пожаловать!");
+            welcomeMessage = properties.getProperty("bot.welcome.message");
+            helpMessage = properties.getProperty("bot.help.message");
 
             log.info("Конфигурация загружена: бот @{}", botUsername);
 
@@ -77,24 +80,15 @@ public class BotConfiguration {
         return null;
     }
 
-    private int getIntProperty(Properties properties, String key, int defaultValue) {
-        String value = properties.getProperty(key);
-        if (value != null && !value.trim().isEmpty()) {
-            try {
-                return Integer.parseInt(value.trim());
-            } catch (NumberFormatException e) {
-                log.warn("Некорректное числовое значение для {}: {}", key, value);
-            }
-        }
-        return defaultValue;
-    }
-
     private void validate() {
         if (botToken == null || botToken.isEmpty()) {
             throw new IllegalStateException("Токен бота не настроен");
         }
         if (botUsername == null || botUsername.isEmpty()) {
             throw new IllegalStateException("Имя бота не настроено");
+        }
+        if (urlServer == null || urlServer.isEmpty()) {
+            throw new IllegalStateException("Адрес сервера для отправки не настроен");
         }
     }
 }
