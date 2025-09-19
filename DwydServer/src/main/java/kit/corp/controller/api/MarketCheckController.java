@@ -6,6 +6,7 @@ import kit.corp.service.CheckService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,16 +21,18 @@ public class MarketCheckController {
     private final CheckService checkService;
 
     @PostMapping("/start")
-    @ResponseStatus(HttpStatus.ACCEPTED)
-    public void start() {
+    public ResponseEntity<ApiResponse> start() {
         log.info("called api/marketCheck/v1/start");
         checkService.start();
+
+        return ResponseEntity.accepted().body(new ApiResponse("Обработка запущена", true));
     }
 
     @PostMapping("/save")
-    @ResponseStatus(HttpStatus.OK)
-    public void save(@Valid @RequestBody final SaveNewProduct saveProduct) {
+    public ResponseEntity<ApiResponse> save(@Valid @RequestBody final SaveNewProduct saveProduct) {
         log.info("called api/marketCheck/v1/save");
         checkService.saveNew(saveProduct);
+
+        return ResponseEntity.ok(new ApiResponse("Товар сохранён", true));
     }
 }

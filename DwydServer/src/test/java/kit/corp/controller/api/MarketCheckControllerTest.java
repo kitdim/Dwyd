@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import kit.corp.freebie.MarketCheckType;
 import kit.corp.model.product.dto.SaveNewProduct;
 import org.instancio.Instancio;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -12,11 +14,14 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
 import java.util.stream.Stream;
 
 import static org.instancio.Select.field;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -28,21 +33,9 @@ class MarketCheckControllerTest {
     @Autowired
     private ObjectMapper om;
 
-    @ParameterizedTest(name = "Test by start method with data: {0}")
-    @MethodSource("provideTestGoodData")
-    public void startTestStatusIsOk(final MarketCheckType marketCheckType, final String article, final String shortLink) throws Exception {
-        SaveNewProduct newProduct = Instancio.of(SaveNewProduct.class)
-                .set(field("article"), article)
-                .set(field("marketCheckType"), marketCheckType)
-                .set(field("shortLink"), shortLink)
-                .create();
-
-        MockHttpServletRequestBuilder requestSave = post("/api/marketCheck/v1/save")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(om.writeValueAsString(newProduct));
-
-        mockMvc.perform(requestSave);
-
+    @Test()
+    @DisplayName("Test by start method")
+    public void startTestStatusIsOk() throws Exception {
         MockHttpServletRequestBuilder requestStart = post("/api/marketCheck/v1/start")
                 .contentType(MediaType.APPLICATION_JSON);
 
@@ -50,13 +43,24 @@ class MarketCheckControllerTest {
                 .andExpect(status().isAccepted());
     }
 
-    @ParameterizedTest(name = "Test by save method with data: {0}")
+    @Test()
+    @DisplayName("Test by start method (response)")
+    public void responseByStartMethodIsTrueAndIsEqualsTest() throws Exception {
+        MvcResult mvcResult = mockMvc.perform(post("/api/marketCheck/v1/start")).andReturn();
+
+        ApiResponse apiResponse = om.readValue(mvcResult.getResponse().getContentAsString(), ApiResponse.class);
+
+        assertTrue(apiResponse.isSuccess());
+        assertEquals("Обработка запущена", apiResponse.message());
+    }
+
+    @ParameterizedTest(name = "Test by save method with data: {0} {1} {2}")
     @MethodSource("provideTestGoodData")
     public void saveTestStatusIsOk(final MarketCheckType marketCheckType, final String article, final String shortLink) throws Exception {
         SaveNewProduct newProduct = Instancio.of(SaveNewProduct.class)
                 .set(field("article"), article)
                 .set(field("marketCheckType"), marketCheckType)
-                .set(field("shortLink"), shortLink)
+                  .set(field("shortLink"), shortLink)
                 .create();
 
         MockHttpServletRequestBuilder request = post("/api/marketCheck/v1/save")
@@ -65,6 +69,26 @@ class MarketCheckControllerTest {
 
         mockMvc.perform(request)
                 .andExpect(status().isOk());
+    }
+
+    @ParameterizedTest(name = "Test by save method(response) with data: {0} {1} {2}")
+    @MethodSource("provideTestGoodData")
+    public void responseBySaveIsTrueAndIsEqualsTest(final MarketCheckType marketCheckType, final String article, final String shortLink) throws Exception {
+        SaveNewProduct newProduct = Instancio.of(SaveNewProduct.class)
+                .set(field("article"), article)
+                .set(field("marketCheckType"), marketCheckType)
+                .set(field("shortLink"), shortLink)
+                .create();
+
+        MvcResult mvcResult = mockMvc.perform(post("/api/marketCheck/v1/save")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(om.writeValueAsString(newProduct))
+        ).andReturn();
+
+        ApiResponse apiResponse = om.readValue(mvcResult.getResponse().getContentAsString(), ApiResponse.class);
+
+        assertTrue(apiResponse.isSuccess());
+        assertEquals("Товар сохранён", apiResponse.message());
     }
 
     public static Stream<Arguments> provideTestGoodData() {
