@@ -35,6 +35,9 @@ public class Product {
     private MarketCheckType market;
     @Column(name = "check_time")
     private Timestamp checkTime;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "product_process_type")
+    private ProductProcessType productProcessType;
 
     @Override
     public String toString() {
@@ -47,6 +50,7 @@ public class Product {
                 ", article='" + article + '\'' +
                 ", market=" + market +
                 ", checkTime=" + checkTime +
+                ", productProcessType=" + productProcessType +
                 '}';
     }
 }
