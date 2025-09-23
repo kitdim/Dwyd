@@ -2,6 +2,7 @@ package kit.corp.bd;
 
 import kit.corp.freebie.MarketCheckType;
 import kit.corp.model.product.Product;
+import kit.corp.model.product.ProductProcessType;
 import kit.corp.model.product.dto.SaveNewProduct;
 import kit.corp.repository.ProductRepository;
 import kit.corp.repository.TaskExecutionRepository;
@@ -22,6 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 @SpringBootTest
 public class ProductRepositoryTest {
     private final List<SaveNewProduct> saveNewProducts = new ArrayList<>();
+    private final List<SaveNewProduct> saveNewProductsWithBadData = new ArrayList<>();
     @Autowired
     private ProductRepository productRepository;
     @Autowired
@@ -44,9 +46,15 @@ public class ProductRepositoryTest {
     @BeforeEach
     public void init() {
         saveNewProducts.clear();
+        saveNewProductsWithBadData.clear();
+
         saveNewProducts.add(new SaveNewProduct(MarketCheckType.YANDEX, "103797360000", "https://market.yandex.ru/cc/7aVTbX"));
         saveNewProducts.add(new SaveNewProduct(MarketCheckType.YANDEX, "4514870086", "https://market.yandex.ru/cc/7cDixu"));
         saveNewProducts.add(new SaveNewProduct(MarketCheckType.YANDEX, "103577166537", "https://market.yandex.ru/cc/7bbmmd"));
+
+        saveNewProductsWithBadData.add(new SaveNewProduct(MarketCheckType.YANDEX, "10379736325", "https://market.yandex.ru/cc/7aVTbX"));
+        saveNewProductsWithBadData.add(new SaveNewProduct(MarketCheckType.YANDEX, "45141441", "https://market.yandex.ru/cc/7cDixu"));
+        saveNewProductsWithBadData.add(new SaveNewProduct(MarketCheckType.YANDEX, "10357712312", "https://market.yandex.ru/cc/7bbmmd"));
     }
 
     @Test
@@ -62,14 +70,26 @@ public class ProductRepositoryTest {
 
     @Test
     @DisplayName("Start test")
-    public void startTest() throws InterruptedException {
+    public void startTest() {
         saveNewProducts.forEach(product -> checkService.saveNew(product));
-
         checkService.start();
 
         List<Product> productListAfterCheck = productRepository.findAll();
         productListAfterCheck.forEach(product -> {
             assertNotNull(product.getCheckTime());
+            assertEquals(ProductProcessType.SALE, product.getProductProcessType());
+        });
+    }
+
+    @Test
+    @DisplayName("Start test with bad data")
+    public void startWistBadData() {
+        saveNewProductsWithBadData.forEach(product -> checkService.saveNew(product));
+        checkService.start();
+
+        List<Product> productListAfterCheck = productRepository.findAll();
+        productListAfterCheck.forEach(product -> {
+            assertEquals(ProductProcessType.NOT_FOUND, product.getProductProcessType());
         });
     }
 }

@@ -8,6 +8,7 @@ import kit.corp.freebie.market.MarkerCheckYandex;
 import kit.corp.freebie.market.MarketCheckOzon;
 import kit.corp.freebie.market.MarketCheckWb;
 import kit.corp.model.product.Product;
+import kit.corp.model.product.ProductProcessType;
 import kit.corp.model.product.dto.SaveNewProduct;
 import kit.corp.model.task.TaskExecution;
 import kit.corp.model.task.TaskStatus;
@@ -53,6 +54,7 @@ public class CheckService {
         product.setMarket(saveNewProduct.marketCheckType());
         product.setArticle(saveNewProduct.article());
         product.setShortLink(saveNewProduct.shortLink());
+        product.setProductProcessType(ProductProcessType.SALE);
 
         productRepository.save(product);
     }
@@ -72,12 +74,11 @@ public class CheckService {
     }
 
     private TaskResult processProducts() {
-        long countElems = productRepository.count();
+        List<Product> products = productRepository.findAllProductsByProcessType(ProductProcessType.SALE);
         long countUpdateElems = 0;
         long countErrors = 0;
 
-        if (countElems > 0) {
-            List<Product> products = productRepository.findAll();
+        if (!products.isEmpty()) {
             for (Product product : products) {
                 try {
                     MarketCheck check = getMarketCheck(product.getMarket(), product.getArticle(), product.getShortLink());
@@ -91,7 +92,10 @@ public class CheckService {
 
                     log.debug("Processed by product: {}", updatedProduct);
                 } catch (Exception e) {
+                    product.setProductProcessType(ProductProcessType.NOT_FOUND);
+                    productRepository.save(product);
                     countErrors++;
+
                     log.error("{} with error: {}.\nStack trace:", product.getArticle(), e.getMessage(), e);
                 }
             }
@@ -99,6 +103,7 @@ public class CheckService {
             log.warn("Nothing to check.");
         }
 
+        long countElems = products.size();
         return new TaskResult(countElems, countUpdateElems, countErrors);
     }
 
