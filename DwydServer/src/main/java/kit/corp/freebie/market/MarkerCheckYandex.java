@@ -13,6 +13,7 @@ import org.jsoup.select.Elements;
 import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.List;
+import java.util.Objects;
 
 @RequiredArgsConstructor
 public class MarkerCheckYandex implements MarketCheck {
@@ -20,6 +21,7 @@ public class MarkerCheckYandex implements MarketCheck {
     private static final List<String> CSS_QUERY = List.of(
             "noframes[data-apiary='patch']",
             "div[data-apiary-widget-id='/content/page/fancyPage/defaultPage/verifiedBadge']");
+    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
     private final String article;
     private final String shortLink;
 
@@ -34,21 +36,25 @@ public class MarkerCheckYandex implements MarketCheck {
 
     @Override
     public JsonNode extract(final Document extractValue) {
-        for (String val : CSS_QUERY) {
-            Elements verifiedBadges = extractValue.select(val);
-            for (var elem : verifiedBadges) {
-                String needBlock = elem.text();
-                if (needBlock.contains(article) && needBlock.contains("price")) {
-                    ObjectMapper objectMapper = new ObjectMapper();
-                    try {
-                        return objectMapper.readTree(needBlock);
-                    } catch (JsonProcessingException e) {
-                        throw new RuntimeException(e);
+        return CSS_QUERY.parallelStream()
+                .flatMap(val -> {
+                    Elements verifiedBadges = extractValue.select(val);
+                    return verifiedBadges.parallelStream();
+                })
+                .map(elem -> {
+                    String needBlock = elem.text();
+                    if (needBlock.contains(article) && needBlock.contains("price")) {
+                        try {
+                            return OBJECT_MAPPER.readTree(needBlock);
+                        } catch (Exception e) {
+                            throw new RuntimeException(e);
+                        }
                     }
-                }
-            }
-        }
-        return null;
+                    return null;
+                })
+                .filter(Objects::nonNull)
+                .findAny()
+                .orElse(null);
     }
 
     @Override

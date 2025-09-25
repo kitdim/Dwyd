@@ -17,6 +17,7 @@ import kit.corp.repository.TaskExecutionRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.nodes.Document;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -35,6 +36,7 @@ public class CheckService {
     private final TaskConfiguration taskConfiguration;
 
     @Scheduled(fixedDelayString = "${tasks.start.time-delay}", timeUnit = TimeUnit.MINUTES)
+    @Async
     public void start() {
         String taskName = taskConfiguration.getStart().getTaskName();
         if (taskExecutionRepository.isRunningTask(taskName, TaskStatus.RUNNING)) {
