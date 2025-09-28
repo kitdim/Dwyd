@@ -24,27 +24,29 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class ProductRepositoryTest {
     private final List<SaveNewProduct> saveNewProducts = new ArrayList<>();
     private final List<SaveNewProduct> saveNewProductsWithBadData = new ArrayList<>();
+
     @Autowired
     private ProductRepository productRepository;
+
     @Autowired
     private TaskExecutionRepository taskExecutionRepository;
+
     @Autowired
     private CheckService checkService;
 
     @AfterEach
-    public void deleteAllAfter() {
-        productRepository.deleteAll();
+    public void cleanUp() {
         taskExecutionRepository.deleteAll();
+        productRepository.deleteAll();
+
+        List<Product> remainingProducts = productRepository.findAll();
+        assertEquals(0, remainingProducts.size(), "База данных должна быть полностью очищена после теста");
     }
 
     @BeforeEach
-    public void deleteAllBefore() {
-        productRepository.deleteAll();
-        taskExecutionRepository.deleteAll();
-    }
+    public void setUp() {
+        cleanUp();
 
-    @BeforeEach
-    public void init() {
         saveNewProducts.clear();
         saveNewProductsWithBadData.clear();
 
@@ -73,6 +75,7 @@ public class ProductRepositoryTest {
     public void startTest() {
         saveNewProducts.forEach(product -> checkService.saveNew(product));
         checkService.start();
+        sleep5Sec();
 
         List<Product> productListAfterCheck = productRepository.findAll();
         productListAfterCheck.forEach(product -> {
@@ -83,13 +86,22 @@ public class ProductRepositoryTest {
 
     @Test
     @DisplayName("Start test with bad data")
-    public void startWistBadData() {
+    public void startWithBadData() {
         saveNewProductsWithBadData.forEach(product -> checkService.saveNew(product));
         checkService.start();
+        sleep5Sec();
 
         List<Product> productListAfterCheck = productRepository.findAll();
         productListAfterCheck.forEach(product -> {
             assertEquals(ProductProcessType.NOT_FOUND, product.getProductProcessType());
         });
+    }
+
+    private void sleep5Sec() {
+        try {
+            Thread.sleep(5000);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
