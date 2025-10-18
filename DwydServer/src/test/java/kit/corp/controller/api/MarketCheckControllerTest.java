@@ -60,7 +60,7 @@ class MarketCheckControllerTest {
         SaveNewProduct newProduct = Instancio.of(SaveNewProduct.class)
                 .set(field("article"), article)
                 .set(field("marketCheckType"), marketCheckType)
-                  .set(field("shortLink"), shortLink)
+                .set(field("shortLink"), shortLink)
                 .create();
 
         MockHttpServletRequestBuilder request = post("/api/marketCheck/v1/save")
@@ -91,10 +91,34 @@ class MarketCheckControllerTest {
         assertEquals("Товар сохранён", apiResponse.message());
     }
 
+    @ParameterizedTest(name = "Test by save method(response) with bad data: {0} {1} {2}")
+    @MethodSource("provideTestBadDataByUnprocessMarkets")
+    public void responseStatusByUnprocessMarkets(final MarketCheckType marketCheckType, final String article, final String shortLink) throws Exception {
+        SaveNewProduct newProduct = Instancio.of(SaveNewProduct.class)
+                .set(field("article"), article)
+                .set(field("marketCheckType"), marketCheckType)
+                .set(field("shortLink"), shortLink)
+                .create();
+
+        MockHttpServletRequestBuilder request = post("/api/marketCheck/v1/save")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(om.writeValueAsString(newProduct));
+
+        mockMvc.perform(request)
+                .andExpect(status().isBadRequest());
+    }
+
+
     public static Stream<Arguments> provideTestGoodData() {
         return Stream.of(
                 Arguments.of(MarketCheckType.YANDEX, "103797360000", "https://market.yandex.ru/cc/7aVTbX"),
                 Arguments.of(MarketCheckType.YANDEX, "4514870086", "https://market.yandex.ru/cc/7cDixu"),
                 Arguments.of(MarketCheckType.YANDEX, "103577166537", "https://market.yandex.ru/cc/7bbmmd"));
+    }
+
+    public static Stream<Arguments> provideTestBadDataByUnprocessMarkets() {
+        return Stream.of(
+                Arguments.of(MarketCheckType.WB, "405801795", "https://www.wildberries.ru/catalog/405801795/detail.aspx?targetUrl=SN"),
+                Arguments.of(MarketCheckType.OZON, "1744752854", "https://ozon.ru/t/QoxQ2es"));
     }
 }
