@@ -9,8 +9,8 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface TaskExecutionRepository extends JpaRepository<TaskExecution, Long> {
-    @Query("SELECT COUNT(te) > 0 FROM TaskExecution te " +
-            "WHERE te.taskName = :taskName AND te.taskStatus = :runningStatus")
+    @Query("SELECT COUNT(te) > 0 FROM TaskExecution te "
+           + "WHERE te.taskName = :taskName AND te.taskStatus = :runningStatus")
     boolean isRunningTask(
             @Param("taskName") String taskName,
             @Param("runningStatus") TaskStatus runningStatus

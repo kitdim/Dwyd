@@ -11,7 +11,7 @@ import java.util.List;
 
 @Repository
 public interface ProductRepository extends JpaRepository<Product, Long> {
-    @Query("SELECT p FROM Product p " +
-            "WHERE p.productProcessType = :productProcessType")
+    @Query("SELECT p FROM Product p "
+            + "WHERE p.productProcessType = :productProcessType")
     List<Product> findAllProductsByProcessType(@Param("productProcessType") ProductProcessType productProcessType);
 }

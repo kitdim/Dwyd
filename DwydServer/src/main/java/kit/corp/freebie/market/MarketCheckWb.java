@@ -5,9 +5,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import kit.corp.freebie.MarketCheck;
-import kit.corp.freebie.MarketCheckType;
 import kit.corp.model.product.Product;
-import kit.corp.util.KitProxy;
 import lombok.RequiredArgsConstructor;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -27,7 +25,7 @@ public class MarketCheckWb implements MarketCheck {
 
     @Override
     public Document fetch() {
-        return new KitProxy().executeBrowserAutomation(this.article, MarketCheckType.WB.name());
+        throw new IllegalArgumentException("Not support.");
     }
 
     @Override

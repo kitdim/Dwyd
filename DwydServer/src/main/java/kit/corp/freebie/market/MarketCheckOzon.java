@@ -4,9 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import kit.corp.freebie.MarketCheck;
-import kit.corp.freebie.MarketCheckType;
 import kit.corp.model.product.Product;
-import kit.corp.util.KitProxy;
 import lombok.RequiredArgsConstructor;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
@@ -25,7 +23,7 @@ public class MarketCheckOzon implements MarketCheck {
 
     @Override
     public Document fetch() {
-        return new KitProxy().executeBrowserAutomation(this.article, MarketCheckType.OZON.name());
+        throw new IllegalArgumentException("Not support.");
     }
 
     @Override

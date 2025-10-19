@@ -5,8 +5,6 @@ import kit.corp.config.TaskConfiguration;
 import kit.corp.freebie.MarketCheck;
 import kit.corp.freebie.MarketCheckType;
 import kit.corp.freebie.market.MarkerCheckYandex;
-import kit.corp.freebie.market.MarketCheckOzon;
-import kit.corp.freebie.market.MarketCheckWb;
 import kit.corp.model.product.Product;
 import kit.corp.model.product.ProductProcessType;
 import kit.corp.model.product.dto.SaveNewProduct;
@@ -83,7 +81,8 @@ public class CheckService {
         if (!products.isEmpty()) {
             for (Product product : products) {
                 try {
-                    MarketCheck check = getMarketCheck(product.getMarket(), product.getArticle(), product.getShortLink());
+                    MarketCheck check = getMarketCheck(product.getMarket(),
+                            product.getArticle(), product.getShortLink());
                     Document document = check.fetch();
                     JsonNode jsonNode = check.extract(document);
                     Product checkProduct = check.getPrice(jsonNode);
@@ -174,5 +173,6 @@ public class CheckService {
         log.debug("Save product: {}.", productFromDb);
     }
 
-    private record TaskResult(long total, long updates, long errors) {}
+    private record TaskResult(long total, long updates, long errors) {
+    }
 }
