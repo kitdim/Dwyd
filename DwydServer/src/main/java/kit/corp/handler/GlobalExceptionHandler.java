@@ -1,9 +1,9 @@
 package kit.corp.handler;
 
 import kit.corp.controller.api.ApiResponse;
-import kit.corp.handler.exception.MarketIsNotSupportException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -17,14 +17,14 @@ public class GlobalExceptionHandler {
         String errorMessage = Objects.requireNonNull(ex.getBindingResult().getFieldError()).getDefaultMessage();
         return ResponseEntity
                 .badRequest()
-                .body(new ApiResponse(errorMessage + "\n, name exception: " + ex.getClass().getName(), false));
+                .body(new ApiResponse(errorMessage + ", name exception: " + ex.getClass().getName(), false));
     }
 
-    @ExceptionHandler(MarketIsNotSupportException.class)
-    public ResponseEntity<ApiResponse> handlerMarketIsNotSupportException(MarketIsNotSupportException ex) {
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<ApiResponse> handleHttpMessageNotReadable(HttpMessageNotReadableException ex) {
         return ResponseEntity
                 .badRequest()
-                .body(new ApiResponse(ex.getMessage() + "\n, name exception: " + ex.getClass().getName(), false));
+                .body(new ApiResponse("Неверный формат запроса: " + ex.getMessage(), false));
     }
 
     @ExceptionHandler(Exception.class)
@@ -32,7 +32,7 @@ public class GlobalExceptionHandler {
         return ResponseEntity
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(new ApiResponse(
-                        "Внутренняя ошибка сервера, описание: " + ex.getMessage() + "\n, name exception: " + ex.getClass().getName(),
+                        "Внутренняя ошибка сервера, описание: " + ex.getMessage() + ", name exception: " + ex.getClass().getName(),
                         false));
     }
 }
