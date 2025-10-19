@@ -93,10 +93,10 @@ class MarketCheckControllerTest {
 
     @ParameterizedTest(name = "Test by save method(response) with bad data: {0} {1} {2}")
     @MethodSource("provideTestBadDataByUnprocessMarkets")
-    public void responseStatusByUnprocessMarkets(final MarketCheckType marketCheckType, final String article, final String shortLink) throws Exception {
+    public void responseStatusByUnprocessMarkets(final String marketCheckTypeBad, final String article, final String shortLink) throws Exception {
         SaveNewProduct newProduct = Instancio.of(SaveNewProduct.class)
                 .set(field("article"), article)
-                .set(field("marketCheckType"), marketCheckType)
+                .set(field("marketCheckType"), marketCheckTypeBad)
                 .set(field("shortLink"), shortLink)
                 .create();
 
@@ -118,7 +118,9 @@ class MarketCheckControllerTest {
 
     public static Stream<Arguments> provideTestBadDataByUnprocessMarkets() {
         return Stream.of(
-                Arguments.of(MarketCheckType.WB, "405801795", "https://www.wildberries.ru/catalog/405801795/detail.aspx?targetUrl=SN"),
-                Arguments.of(MarketCheckType.OZON, "1744752854", "https://ozon.ru/t/QoxQ2es"));
+                Arguments.of(null, "405801795", "https://www.wildberries.ru/catalog/405801795/detail.aspx?targetUrl=SN"),
+                Arguments.of("WB", "405801795", null),
+                Arguments.of("WB", null, "https://www.wildberries.ru/catalog/405801795/detail.aspx?targetUrl=SN"),
+                Arguments.of("OZON", "1744752854", "https://ozon.ru/t/QoxQ2es"));
     }
 }
