@@ -1,5 +1,6 @@
 package kit.org.config;
 
+import io.github.cdimascio.dotenv.Dotenv;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
@@ -22,6 +23,7 @@ public class BotConfiguration {
     private String urlServer;
 
     private static final String CONFIG_FILE = "/bot.properties";
+    private static final Dotenv dotenv = Dotenv.load();
 
     public BotConfiguration() {
         loadConfig();
@@ -40,17 +42,17 @@ public class BotConfiguration {
             }
 
             // Обязательные параметры
-            botToken = getRequiredProperty(properties, "bot.token");
-            botUsername = getRequiredProperty(properties, "bot.username");
-            botName = getRequiredProperty(properties, "bot.name");
-            urlServer = getRequiredProperty(properties, "server.url");
+            botToken = dotenv.get("BOT_TOKEN");
+            botUsername = dotenv.get("BOT_USERNAME");
+            botName = dotenv.get("BOT_NAME");
+            urlServer = getRequiredProperty(properties, "server.url.save");
 
             validate();
 
             // Опциональные параметры
             adminId = getLongProperty(properties, "bot.admin.id");
-            welcomeMessage = properties.getProperty("bot.welcome.message");
-            helpMessage = properties.getProperty("bot.help.message");
+            welcomeMessage = properties.getProperty("bot.message.welcome", "Hi");
+            helpMessage = properties.getProperty("bot.message.help", "It works like this.");
 
             log.info("Конфигурация загружена: бот @{}", botUsername);
 

@@ -112,7 +112,7 @@ public class KitBot implements LongPollingSingleThreadUpdateConsumer {
                 case "Помощь" ->  {
                     SendPhoto photo = SendPhoto.builder()
                             .chatId(chatId)
-                            .photo(new InputFile(new File("C:\\MyProg\\Dwyd\\DwydBot\\src\\main\\resources\\helpPhoto.jpg")))
+                            .photo(new InputFile(new File(getClass().getClassLoader().getResource("helpPhoto.jpg").getFile())))
                             .caption(myConfig.messageText.get("HelpMessage").getFirst())
                             .replyMarkup(keyboardMarkup)
                             .build();
