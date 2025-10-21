@@ -59,8 +59,8 @@ public class KitBot implements LongPollingSingleThreadUpdateConsumer {
         // Create a keyboard row
         KeyboardRow row = new KeyboardRow();
         // Set each button
-        row.add("Добавить товар");
-        row.add("Помощь");
+        row.add(myConfig.textMessagesAndButtons.get("AddProductNameButton").getFirst());
+        row.add(myConfig.textMessagesAndButtons.get("HelpNameButton").getFirst());
         keyboard.add(row);
 
         ReplyKeyboardMarkup keyboardMarkup = new ReplyKeyboardMarkup(keyboard);
@@ -88,7 +88,9 @@ public class KitBot implements LongPollingSingleThreadUpdateConsumer {
                     }
                 }
 
-                String textSend = isSuccess ? "Товар добавлен" : "Товар не добавлен";
+                String textSend = isSuccess ?
+                        myConfig.textMessagesAndButtons.get("AnswerYesMessage").getFirst() :
+                        myConfig.textMessagesAndButtons.get("AnswerNoMessage").getFirst();
 
                 SendMessage message = SendMessage.builder()
                         .chatId(chatId)
@@ -104,16 +106,16 @@ public class KitBot implements LongPollingSingleThreadUpdateConsumer {
             }
 
             String answer = switch (messageText) {
-                case "/start" -> myConfig.messageText.get("WelcomeMessage").getFirst();
+                case "/start" -> myConfig.textMessagesAndButtons.get("WelcomeMessage").getFirst();
                 case "Добавить товар" -> {
                     waitingForProduct.put(chatId, true); // Включить ожидание товара
-                    yield "Отправьте ссылку на товар и артикль товара";
+                    yield myConfig.textMessagesAndButtons.get("InstructionMessage").getFirst();
                 }
                 case "Помощь" ->  {
                     SendPhoto photo = SendPhoto.builder()
                             .chatId(chatId)
-                            .photo(new InputFile(new File("C:\\MyProg\\Dwyd\\DwydBot\\src\\main\\resources\\helpPhoto.jpg")))
-                            .caption(myConfig.messageText.get("HelpMessage").getFirst())
+                            .photo(new InputFile(new File(getClass().getClassLoader().getResource("helpPhoto.jpg").getFile())))
+                            .caption(myConfig.textMessagesAndButtons.get("HelpMessage").getFirst())
                             .replyMarkup(keyboardMarkup)
                             .build();
                     try {
@@ -178,11 +180,16 @@ public class KitBot implements LongPollingSingleThreadUpdateConsumer {
     }
 
     private KitBotConfig initBotConfig(BotConfiguration configuration) {
-        Map<String, List<String>> entities = new HashMap<>();
-        entities.put("WelcomeMessage", List.of(configuration.getWelcomeMessage()));
-        entities.put("HelpMessage", List.of(configuration.getHelpMessage()));
+        Map<String, List<String>> textMessagesAndButtons = new HashMap<>();
+        textMessagesAndButtons.put("WelcomeMessage", List.of(configuration.getWelcomeMessage()));
+        textMessagesAndButtons.put("HelpMessage", List.of(configuration.getHelpMessage()));
+        textMessagesAndButtons.put("InstructionMessage", List.of(configuration.getInstructionMessage()));
+        textMessagesAndButtons.put("AnswerYesMessage", List.of(configuration.getAnswerYesMessage()));
+        textMessagesAndButtons.put("AnswerNoMessage", List.of(configuration.getAnswerNoMessage()));
+        textMessagesAndButtons.put("AddProductNameButton", List.of(configuration.getAddProductNameButton()));
+        textMessagesAndButtons.put("HelpNameButton", List.of(configuration.getHelpNameButton()));
 
-        return new KitBotConfig(configuration.getBotName(), configuration.getBotUsername(), configuration.getBotToken(), configuration.getUrlServer(), entities, configuration.getAdminId());
+        return new KitBotConfig(configuration.getBotName(), configuration.getBotUsername(), configuration.getBotToken(), configuration.getUrlServer(), textMessagesAndButtons, configuration.getAdminId());
     }
 
     private static class KitBotConfig {
@@ -190,15 +197,15 @@ public class KitBot implements LongPollingSingleThreadUpdateConsumer {
         private String botUserName;
         private String botToken;
         private String url;
-        private Map<String, List<String>> messageText;
+        private Map<String, List<String>> textMessagesAndButtons;
         private Long adminId;
 
-        public KitBotConfig(String botName, String botUserName, String botToken, String url, Map<String, List<String>> messageText, Long adminId) {
+        public KitBotConfig(String botName, String botUserName, String botToken, String url, Map<String, List<String>> textMessagesAndButtons, Long adminId) {
             this.botName = botName;
             this.botUserName = botUserName;
             this.botToken = botToken;
             this.url = url;
-            this.messageText = messageText;
+            this.textMessagesAndButtons = textMessagesAndButtons;
             this.adminId = adminId;
         }
     }

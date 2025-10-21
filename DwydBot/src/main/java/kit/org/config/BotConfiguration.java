@@ -1,5 +1,6 @@
 package kit.org.config;
 
+import io.github.cdimascio.dotenv.Dotenv;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
@@ -17,11 +18,17 @@ public class BotConfiguration {
     private String botToken;
     private String botUsername;
     private Long adminId;
+    private String urlServer;
     private String welcomeMessage;
     private String helpMessage;
-    private String urlServer;
+    private String answerYesMessage;
+    private String answerNoMessage;
+    private String instructionMessage;
+    private String helpNameButton;
+    private String addProductNameButton;
 
     private static final String CONFIG_FILE = "/bot.properties";
+    private static final Dotenv dotenv = Dotenv.load();
 
     public BotConfiguration() {
         loadConfig();
@@ -40,17 +47,22 @@ public class BotConfiguration {
             }
 
             // Обязательные параметры
-            botToken = getRequiredProperty(properties, "bot.token");
-            botUsername = getRequiredProperty(properties, "bot.username");
-            botName = getRequiredProperty(properties, "bot.name");
-            urlServer = getRequiredProperty(properties, "server.url");
+            botToken = dotenv.get("BOT_TOKEN");
+            botUsername = dotenv.get("BOT_USERNAME");
+            botName = dotenv.get("BOT_NAME");
+            urlServer = getRequiredProperty(properties, "server.url.save");
 
             validate();
 
             // Опциональные параметры
             adminId = getLongProperty(properties, "bot.admin.id");
-            welcomeMessage = properties.getProperty("bot.welcome.message");
-            helpMessage = properties.getProperty("bot.help.message");
+            welcomeMessage = properties.getProperty("bot.message.welcome", "Hi");
+            helpMessage = properties.getProperty("bot.message.help", "It works like this.");
+            answerYesMessage = properties.getProperty("bot.message.answer.yes", "Success add.");
+            answerNoMessage = properties.getProperty("bot.message.answer.no", "Unsuccessful.");
+            instructionMessage = properties.getProperty("bot.message.instruction","Please send the link to the product and the product article number.");
+            helpNameButton = properties.getProperty("bot.button.help", "Help.");
+            addProductNameButton = properties.getProperty("bot.button.add", "Product add.");
 
             log.info("Конфигурация загружена: бот @{}", botUsername);
 
@@ -86,6 +98,9 @@ public class BotConfiguration {
         }
         if (botUsername == null || botUsername.isEmpty()) {
             throw new IllegalStateException("Имя бота не настроено");
+        }
+        if (botName == null || botName.isEmpty()) {
+            throw new IllegalStateException("Имя бота#2 не настроено");
         }
         if (urlServer == null || urlServer.isEmpty()) {
             throw new IllegalStateException("Адрес сервера для отправки не настроен");
