@@ -18,9 +18,14 @@ public class BotConfiguration {
     private String botToken;
     private String botUsername;
     private Long adminId;
+    private String urlServer;
     private String welcomeMessage;
     private String helpMessage;
-    private String urlServer;
+    private String answerYesMessage;
+    private String answerNoMessage;
+    private String instructionMessage;
+    private String helpNameButton;
+    private String addProductNameButton;
 
     private static final String CONFIG_FILE = "/bot.properties";
     private static final Dotenv dotenv = Dotenv.load();
@@ -53,6 +58,11 @@ public class BotConfiguration {
             adminId = getLongProperty(properties, "bot.admin.id");
             welcomeMessage = properties.getProperty("bot.message.welcome", "Hi");
             helpMessage = properties.getProperty("bot.message.help", "It works like this.");
+            answerYesMessage = properties.getProperty("bot.message.answer.yes", "Success add.");
+            answerNoMessage = properties.getProperty("bot.message.answer.no", "Unsuccessful.");
+            instructionMessage = properties.getProperty("bot.message.instruction","Please send the link to the product and the product article number.");
+            helpNameButton = properties.getProperty("bot.button.help", "Help.");
+            addProductNameButton = properties.getProperty("bot.button.add", "Product add.");
 
             log.info("Конфигурация загружена: бот @{}", botUsername);
 
@@ -88,6 +98,9 @@ public class BotConfiguration {
         }
         if (botUsername == null || botUsername.isEmpty()) {
             throw new IllegalStateException("Имя бота не настроено");
+        }
+        if (botName == null || botName.isEmpty()) {
+            throw new IllegalStateException("Имя бота#2 не настроено");
         }
         if (urlServer == null || urlServer.isEmpty()) {
             throw new IllegalStateException("Адрес сервера для отправки не настроен");
