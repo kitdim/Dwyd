@@ -23,11 +23,11 @@ public class Product {
     @Id
     @GeneratedValue(strategy = IDENTITY)
     private Long id;
-    private double price;
+    private Double price;
     @Column(name = "price_with_discount")
-    private double priceWithDiscount;
+    private Double priceWithDiscount;
     @Column(name = "last_price")
-    private double lastPrice;
+    private Double lastPrice;
     private String article;
     @Column(name = "short_link")
     private String shortLink;
@@ -38,6 +38,8 @@ public class Product {
     @Enumerated(EnumType.STRING)
     @Column(name = "product_process_type")
     private ProductProcessType productProcessType;
+    @Column(name = "user_id")
+    private Long userId;
 
     @Override
     public String toString() {
@@ -51,6 +53,7 @@ public class Product {
                 + ", market=" + market
                 + ", checkTime=" + checkTime
                 + ", productProcessType=" + productProcessType
+                + ", userId=" + userId
                 + '}';
     }
 }
