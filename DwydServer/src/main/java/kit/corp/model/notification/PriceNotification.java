@@ -18,12 +18,10 @@ public class PriceNotification {
     @Id
     @GeneratedValue(strategy = IDENTITY)
     private Long id;
-    @Column(name = "all_price")
+    @Column(name = "all_prices")
     private String allPrices;
     @Column(name = "product_id")
     private Long productId;
     @Column(name = "user_id")
     private Long userId;
-    @Column(name = "is_success_send")
-    private Boolean isSuccessSend;
 }

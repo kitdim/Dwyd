@@ -10,4 +10,6 @@
     <include file="sql/1.4-add-task-executions.sql" relativeToChangelogFile="true"/>
     <include file="sql/1.5-add-field-shortLink.sql" relativeToChangelogFile="true"/>
     <include file="sql/1.6-add-field-productProcessType.sql" relativeToChangelogFile="true"/>
+    <include file="sql/1.7-add-field-userId-to-products.sql" relativeToChangelogFile="true"/>
+    <include file="sql/1.8-add-table-price-notifications.sql" relativeToChangelogFile="true"/>
 </databaseChangeLog>
