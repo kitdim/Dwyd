@@ -50,13 +50,13 @@ public class ProductRepositoryTest {
         saveNewProducts.clear();
         saveNewProductsWithBadData.clear();
 
-        saveNewProducts.add(new SaveNewProduct(MarketCheckType.YANDEX, "103797360000", "https://market.yandex.ru/cc/7aVTbX"));
-        saveNewProducts.add(new SaveNewProduct(MarketCheckType.YANDEX, "4514870086", "https://market.yandex.ru/cc/7cDixu"));
-        saveNewProducts.add(new SaveNewProduct(MarketCheckType.YANDEX, "103577166537", "https://market.yandex.ru/cc/7bbmmd"));
+        saveNewProducts.add(new SaveNewProduct(MarketCheckType.YANDEX, "103797360000", "https://market.yandex.ru/cc/7aVTbX", 12L));
+        saveNewProducts.add(new SaveNewProduct(MarketCheckType.YANDEX, "4514870086", "https://market.yandex.ru/cc/7cDixu", 13L));
+        saveNewProducts.add(new SaveNewProduct(MarketCheckType.YANDEX, "103577166537", "https://market.yandex.ru/cc/7bbmmd", 14L));
 
-        saveNewProductsWithBadData.add(new SaveNewProduct(MarketCheckType.YANDEX, "10379736325", "https://market.yandex.ru/cc/7aVTbX"));
-        saveNewProductsWithBadData.add(new SaveNewProduct(MarketCheckType.YANDEX, "45141441", "https://market.yandex.ru/cc/7cDixu"));
-        saveNewProductsWithBadData.add(new SaveNewProduct(MarketCheckType.YANDEX, "10357712312", "https://market.yandex.ru/cc/7bbmmd"));
+        saveNewProductsWithBadData.add(new SaveNewProduct(MarketCheckType.YANDEX, "10379736325", "https://market.yandex.ru/cc/7aVTbX", 15L));
+        saveNewProductsWithBadData.add(new SaveNewProduct(MarketCheckType.YANDEX, "45141441", "https://market.yandex.ru/cc/7cDixu", 16L));
+        saveNewProductsWithBadData.add(new SaveNewProduct(MarketCheckType.YANDEX, "10357712312", "https://market.yandex.ru/cc/7bbmmd", 112L));
     }
 
     @Test
