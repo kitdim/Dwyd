@@ -10,4 +10,5 @@
     <include file="sql/1.4-add-task-executions.sql" relativeToChangelogFile="true"/>
     <include file="sql/1.5-add-field-shortLink.sql" relativeToChangelogFile="true"/>
     <include file="sql/1.6-add-field-productProcessType.sql" relativeToChangelogFile="true"/>
+    <include file="sql/1.9-drop-not-null-to-price-field.sql" relativeToChangelogFile="true"/>
 </databaseChangeLog>
