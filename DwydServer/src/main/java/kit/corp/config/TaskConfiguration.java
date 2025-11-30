@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 public class TaskConfiguration {
     private Save save;
     private Start start;
+    private Clear clear;
     private boolean needAuth;
 
     @Data
@@ -24,5 +25,13 @@ public class TaskConfiguration {
     public static class Start {
         private long timeDelay;
         private String taskName;
+    }
+
+    @Data
+    @ConfigurationProperties(prefix = "tasks.clear")
+    public static class Clear {
+        private String taskName;
+        private String tableName;
+        private long timeDelay;
     }
 }
