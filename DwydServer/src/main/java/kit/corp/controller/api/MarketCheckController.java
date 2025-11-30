@@ -1,15 +1,15 @@
 package kit.corp.controller.api;
 
 import jakarta.validation.Valid;
+import kit.corp.controller.api.response.ApiResponse;
+import kit.corp.controller.api.response.ApiResponseWithObject;
 import kit.corp.model.product.dto.SaveNewProduct;
 import kit.corp.service.CheckService;
+import kit.corp.service.PriceNotificationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/marketCheck/v1")
@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 public class MarketCheckController {
     private final CheckService checkService;
+    private final PriceNotificationService priceNotificationService;
 
     @PostMapping("/start")
     public ResponseEntity<ApiResponse> start() {
@@ -32,5 +33,12 @@ public class MarketCheckController {
         checkService.saveNew(saveProduct);
 
         return ResponseEntity.ok(new ApiResponse("Товар сохранён", true));
+    }
+
+    @GetMapping("/notification/{id}")
+    public ResponseEntity<ApiResponseWithObject> getNotification(@PathVariable Long id) {
+        log.info("called api/marketCheck/v1/getNotification");
+
+        return ResponseEntity.ok(new ApiResponseWithObject(priceNotificationService.getPriceNotificationsByUserId(id), true));
     }
 }

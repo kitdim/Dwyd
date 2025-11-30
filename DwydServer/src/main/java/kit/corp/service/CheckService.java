@@ -34,7 +34,7 @@ public class CheckService {
     private final ProductRepository productRepository;
     private final TaskExecutionRepository taskExecutionRepository;
     private final TaskConfiguration taskConfiguration;
-    private final PriceNotificationRepository priceNotificationRepository;
+    private final PriceNotificationService priceNotificationService;
 
     @Scheduled(fixedDelayString = "${tasks.start.time-delay}", timeUnit = TimeUnit.MINUTES)
     @Async
@@ -155,7 +155,7 @@ public class CheckService {
             product.setPriceWithDiscount(checkProduct.getPriceWithDiscount());
 
             log.debug("Check product: {}, price update.", product);
-            saveNotification(product);
+            priceNotificationService.saveNotification(product);
 
             return product;
         } else {
@@ -177,31 +177,6 @@ public class CheckService {
 
         productRepository.save(productFromDb);
         log.debug("Save product: {}.", productFromDb);
-    }
-
-    private void saveNotification(Product productNotifications) {
-        String allPricesText = String.format(
-                """
-                        priceWithDiscount:%f\
-                        priceWithDiscount:%f\
-                        lastPrice:%f""",
-                productNotifications.getPrice(),
-                productNotifications.getPriceWithDiscount(),
-                productNotifications.getLastPrice());
-
-        PriceNotification notification = PriceNotification
-                .builder()
-                .allPrices(allPricesText)
-                .userId(productNotifications.getUserId())
-                .productId(productNotifications.getId())
-                .build();
-
-        try {
-            priceNotificationRepository.save(notification);
-            log.debug("Save notification: {}.", notification);
-        } catch (Exception e) {
-            log.error("{} with error: {}.\nStack trace:", notification, e.getMessage(), e);
-        }
     }
 
     private record TaskResult(long total, long updates, long errors) {

@@ -1,6 +1,7 @@
 package kit.corp.controller.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import kit.corp.controller.api.response.ApiResponse;
 import kit.corp.freebie.MarketCheckType;
 import kit.corp.model.product.dto.SaveNewProduct;
 import org.instancio.Instancio;

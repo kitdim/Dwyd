@@ -13,4 +13,5 @@
     <include file="sql/1.7-add-field-userId-to-products.sql" relativeToChangelogFile="true"/>
     <include file="sql/1.8-add-table-price-notifications.sql" relativeToChangelogFile="true"/>
     <include file="sql/1.9-drop-not-null-to-price-field.sql" relativeToChangelogFile="true"/>
+    <include file="sql/1.10-add-filed-shortLink-to-notifications.sql" relativeToChangelogFile="true"/>
 </databaseChangeLog>

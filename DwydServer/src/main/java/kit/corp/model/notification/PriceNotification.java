@@ -1,10 +1,7 @@
 package kit.corp.model.notification;
 
 import jakarta.persistence.*;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 import static jakarta.persistence.GenerationType.IDENTITY;
 
@@ -14,6 +11,8 @@ import static jakarta.persistence.GenerationType.IDENTITY;
 @Setter
 @Builder
 @ToString
+@AllArgsConstructor
+@NoArgsConstructor
 public class PriceNotification {
     @Id
     @GeneratedValue(strategy = IDENTITY)
@@ -24,4 +23,6 @@ public class PriceNotification {
     private Long productId;
     @Column(name = "user_id")
     private Long userId;
+    @Column(name = "short_link")
+    private String shortLink;
 }

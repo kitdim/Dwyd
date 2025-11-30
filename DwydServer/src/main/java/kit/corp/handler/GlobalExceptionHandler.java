@@ -1,6 +1,6 @@
 package kit.corp.handler;
 
-import kit.corp.controller.api.ApiResponse;
+import kit.corp.controller.api.response.ApiResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
