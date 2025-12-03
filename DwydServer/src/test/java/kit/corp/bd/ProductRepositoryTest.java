@@ -52,7 +52,7 @@ public class ProductRepositoryTest {
 
         saveNewProducts.add(new SaveNewProduct(MarketCheckType.YANDEX, "103797360000", "https://market.yandex.ru/cc/7aVTbX", 12L));
         saveNewProducts.add(new SaveNewProduct(MarketCheckType.YANDEX, "4514870086", "https://market.yandex.ru/cc/7cDixu", 13L));
-        saveNewProducts.add(new SaveNewProduct(MarketCheckType.YANDEX, "103577166537", "https://market.yandex.ru/cc/7bbmmd", 14L));
+        saveNewProducts.add(new SaveNewProduct(MarketCheckType.YANDEX, "103737418578", "https://market.yandex.ru/cc/8A3KyB", 14L));
 
         saveNewProductsWithBadData.add(new SaveNewProduct(MarketCheckType.YANDEX, "10379736325", "https://market.yandex.ru/cc/7aVTbX", 15L));
         saveNewProductsWithBadData.add(new SaveNewProduct(MarketCheckType.YANDEX, "45141441", "https://market.yandex.ru/cc/7cDixu", 16L));
