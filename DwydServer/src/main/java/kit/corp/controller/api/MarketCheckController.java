@@ -37,7 +37,7 @@ public class MarketCheckController {
 
     @GetMapping("/notification/{id}")
     public ResponseEntity<ApiResponseWithObject> getNotification(@PathVariable Long id) {
-        log.info("called api/marketCheck/v1/getNotification");
+        log.info("called api/marketCheck/v1/notification");
 
         return ResponseEntity.ok(new ApiResponseWithObject(priceNotificationService.getPriceNotificationsByUserId(id), true));
     }
