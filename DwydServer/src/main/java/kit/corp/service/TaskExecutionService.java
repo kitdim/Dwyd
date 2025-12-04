@@ -23,7 +23,7 @@ public class TaskExecutionService {
     private final TaskExecutionRepository taskExecutionRepository;
     private final TaskConfiguration taskConfiguration;
 
-    @Scheduled(fixedDelayString = "${tasks.clear.time-delay}", timeUnit = TimeUnit.MINUTES)
+    @Scheduled(fixedDelayString = "${tasks.clear.time-delay}", timeUnit = TimeUnit.MINUTES, initialDelay = 5)
     @Async
     public void clear() {
         String taskName = taskConfiguration.getClear().getTaskName();

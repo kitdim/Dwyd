@@ -29,10 +29,7 @@ public class PriceNotificationService {
 
     public void saveNotification(Product productNotifications) {
         String allPricesText = String.format(
-                """
-                        price:%f\
-                        priceWithDiscount:%f\
-                        lastPrice:%f""",
+                "price:%.2f|priceWithDiscount:%.2f|lastPrice:%.2f",
                 productNotifications.getPrice(),
                 productNotifications.getPriceWithDiscount(),
                 productNotifications.getLastPrice());
