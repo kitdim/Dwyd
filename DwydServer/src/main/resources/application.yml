@@ -24,4 +24,8 @@ tasks:
   start:
     task-name: start
     time-delay: 5
+  clear:
+    task-name: clear
+    table-name: price_notifications
+    time-delay: 60
   need-auth: false

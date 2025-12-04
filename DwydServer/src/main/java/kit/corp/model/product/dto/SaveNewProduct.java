@@ -8,5 +8,7 @@ public record SaveNewProduct(@NotNull(message = "Не указано назва�
                              @NotNull(message = "Артикл не указан")
                              String article,
                              @NotNull(message = "Ссылка не указана")
-                             String shortLink) {
+                             String shortLink,
+                             @NotNull(message = "id пользователя не может быть пустым")
+                             Long userId) {
 }

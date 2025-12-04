@@ -5,11 +5,13 @@ import kit.corp.config.TaskConfiguration;
 import kit.corp.freebie.MarketCheck;
 import kit.corp.freebie.MarketCheckType;
 import kit.corp.freebie.market.MarkerCheckYandex;
+import kit.corp.model.notification.PriceNotification;
 import kit.corp.model.product.Product;
 import kit.corp.model.product.ProductProcessType;
 import kit.corp.model.product.dto.SaveNewProduct;
 import kit.corp.model.task.TaskExecution;
 import kit.corp.model.task.TaskStatus;
+import kit.corp.repository.PriceNotificationRepository;
 import kit.corp.repository.ProductRepository;
 import kit.corp.repository.TaskExecutionRepository;
 import lombok.RequiredArgsConstructor;
@@ -32,6 +34,7 @@ public class CheckService {
     private final ProductRepository productRepository;
     private final TaskExecutionRepository taskExecutionRepository;
     private final TaskConfiguration taskConfiguration;
+    private final PriceNotificationService priceNotificationService;
 
     @Scheduled(fixedDelayString = "${tasks.start.time-delay}", timeUnit = TimeUnit.MINUTES)
     @Async
@@ -55,6 +58,7 @@ public class CheckService {
         product.setArticle(saveNewProduct.article());
         product.setShortLink(saveNewProduct.shortLink());
         product.setProductProcessType(ProductProcessType.SALE);
+        product.setUserId(saveNewProduct.userId());
 
         productRepository.save(product);
     }
@@ -149,7 +153,9 @@ public class CheckService {
             product.setPrice(checkProduct.getPrice());
             product.setLastPrice(checkProduct.getLastPrice());
             product.setPriceWithDiscount(checkProduct.getPriceWithDiscount());
+
             log.debug("Check product: {}, price update.", product);
+            priceNotificationService.saveNotification(product);
 
             return product;
         } else {

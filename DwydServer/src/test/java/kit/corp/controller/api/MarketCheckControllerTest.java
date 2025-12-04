@@ -1,6 +1,7 @@
 package kit.corp.controller.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import kit.corp.controller.api.response.ApiResponse;
 import kit.corp.freebie.MarketCheckType;
 import kit.corp.model.product.dto.SaveNewProduct;
 import org.instancio.Instancio;
@@ -9,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -23,6 +25,7 @@ import static org.instancio.Select.field;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -108,6 +111,14 @@ class MarketCheckControllerTest {
                 .andExpect(status().isBadRequest());
     }
 
+    @ParameterizedTest(name = "Test by getNotification method is ok, with id: {0}")
+    @ValueSource(ints = {1})
+    public void getPriceNotificationByUserIdTestIsOk(final int id) throws Exception {
+        MockHttpServletRequestBuilder request = get("/api/marketCheck/v1/notification/{id}", id);
+
+        mockMvc.perform(request)
+                .andExpect(status().isOk());
+    }
 
     public static Stream<Arguments> provideTestGoodData() {
         return Stream.of(
