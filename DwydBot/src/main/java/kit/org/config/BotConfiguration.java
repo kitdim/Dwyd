@@ -9,6 +9,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 
 @Slf4j
@@ -18,7 +20,6 @@ public class BotConfiguration {
     private String botToken;
     private String botUsername;
     private Long adminId;
-    private String urlServer;
     private String welcomeMessage;
     private String helpMessage;
     private String answerYesMessage;
@@ -26,6 +27,7 @@ public class BotConfiguration {
     private String instructionMessage;
     private String helpNameButton;
     private String addProductNameButton;
+    private List<String> urlsServer;
 
     private static final String CONFIG_FILE = "/bot.properties";
     private static final Dotenv dotenv = Dotenv.load();
@@ -36,6 +38,7 @@ public class BotConfiguration {
 
     private void loadConfig() {
         Properties properties = new Properties();
+        urlsServer = new ArrayList<>();
 
         try (InputStream input = getClass().getResourceAsStream(CONFIG_FILE)) {
             if (input == null) {
@@ -50,7 +53,9 @@ public class BotConfiguration {
             botToken = dotenv.get("BOT_TOKEN");
             botUsername = dotenv.get("BOT_USERNAME");
             botName = dotenv.get("BOT_NAME");
-            urlServer = getRequiredProperty(properties, "server.url.save");
+
+            urlsServer.add(getRequiredProperty(properties, "server.url.save"));
+            urlsServer.add(getRequiredProperty(properties, "server.url.notification"));
 
             validate();
 
@@ -102,8 +107,8 @@ public class BotConfiguration {
         if (botName == null || botName.isEmpty()) {
             throw new IllegalStateException("Имя бота#2 не настроено");
         }
-        if (urlServer == null || urlServer.isEmpty()) {
-            throw new IllegalStateException("Адрес сервера для отправки не настроен");
+        if (urlsServer.isEmpty()) {
+            throw new IllegalStateException("Урлы сервера не настроены");
         }
     }
 }

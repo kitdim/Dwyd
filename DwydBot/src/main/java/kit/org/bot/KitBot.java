@@ -80,8 +80,8 @@ public class KitBot implements LongPollingSingleThreadUpdateConsumer {
                     try {
                         String[] bunch = messageText.split(" ");
                         String marketCheckTypeAfterPreprocess = getMarket(bunch[0]);
-                        ProductSave productSave = new ProductSave(marketCheckTypeAfterPreprocess, bunch[0], bunch[1]);
-                        sendRequest(productSave, myConfig.url);
+                        ProductSave productSave = new ProductSave(marketCheckTypeAfterPreprocess, bunch[0], bunch[1], update.getMessage().getChatId());
+                        sendRequest(productSave);
                         isSuccess = true;
                     } catch (RuntimeException e) {
                         e.printStackTrace();
@@ -158,14 +158,14 @@ public class KitBot implements LongPollingSingleThreadUpdateConsumer {
         }
     }
 
-    private HttpResponse<String> sendRequest(ProductSave productSave, String url) {
+    private HttpResponse<String> sendRequest(ProductSave productSave) {
         try {
             // Конвертируем объект в JSON
             String requestBody = objectMapper.writeValueAsString(productSave);
 
             // Создаем HTTP запрос
             HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create(url))
+                    .uri(URI.create(myConfig.urls.get("save")))
                     .header("Content-Type", "application/json")
                     .header("Accept", "application/json")
                     .POST(HttpRequest.BodyPublishers.ofString(requestBody))
@@ -189,22 +189,26 @@ public class KitBot implements LongPollingSingleThreadUpdateConsumer {
         textMessagesAndButtons.put("AddProductNameButton", List.of(configuration.getAddProductNameButton()));
         textMessagesAndButtons.put("HelpNameButton", List.of(configuration.getHelpNameButton()));
 
-        return new KitBotConfig(configuration.getBotName(), configuration.getBotUsername(), configuration.getBotToken(), configuration.getUrlServer(), textMessagesAndButtons, configuration.getAdminId());
+        Map<String, String> urls = new HashMap<>();
+        urls.put("save", configuration.getUrlsServer().getFirst());
+        urls.put("notification", configuration.getUrlsServer().getLast());
+
+        return new KitBotConfig(configuration.getBotName(), configuration.getBotUsername(), configuration.getBotToken(), urls, textMessagesAndButtons, configuration.getAdminId());
     }
 
     private static class KitBotConfig {
         private String botName;
         private String botUserName;
         private String botToken;
-        private String url;
+        private Map<String, String> urls;
         private Map<String, List<String>> textMessagesAndButtons;
         private Long adminId;
 
-        public KitBotConfig(String botName, String botUserName, String botToken, String url, Map<String, List<String>> textMessagesAndButtons, Long adminId) {
+        public KitBotConfig(String botName, String botUserName, String botToken, Map<String, String> urls, Map<String, List<String>> textMessagesAndButtons, Long adminId) {
             this.botName = botName;
             this.botUserName = botUserName;
             this.botToken = botToken;
-            this.url = url;
+            this.urls = urls;
             this.textMessagesAndButtons = textMessagesAndButtons;
             this.adminId = adminId;
         }

@@ -11,7 +11,7 @@ public class Main {
 
         try (TelegramBotsLongPollingApplication botsApplication = new TelegramBotsLongPollingApplication()) {
             botsApplication.registerBot(configuration.getBotToken(), new KitBot(configuration));
-            System.out.println("MyAmazingBot successfully started!");
+            System.out.printf("%s successfully started!", configuration.getBotName());
 
             Thread.currentThread().join();
         } catch (Exception e) {
