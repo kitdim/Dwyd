@@ -45,11 +45,9 @@ public class KitBot implements LongPollingSingleThreadUpdateConsumer {
         waitingForProduct = new ConcurrentHashMap<>();
         myConfig = initBotConfig(configuration);
         telegramClient = new OkHttpTelegramClient(myConfig.botToken);
-        httpClient = HttpClient.newBuilder()
-                .connectTimeout(Duration.ofSeconds(10))
-                .build();
         objectMapper = new ObjectMapper();
         userRepository = UserRepository.getInstance();
+        httpClient = HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(10)).build();
     }
 
     @Override
@@ -89,7 +87,6 @@ public class KitBot implements LongPollingSingleThreadUpdateConsumer {
                         sendRequest(productSave);
                         isSuccess = true;
 
-                        // TODO There place need create method to save data to repository
                         userRepository.save(new User(chatId, marketCheckTypeAfterPreprocess, bunch[0], bunch[1]));
                     } catch (RuntimeException e) {
                         e.printStackTrace();
@@ -152,6 +149,12 @@ public class KitBot implements LongPollingSingleThreadUpdateConsumer {
                 e.printStackTrace();
             }
         }
+    }
+
+    public void sendNotification(Long chatId) {
+//        SendMessage message = SendMessage.builder()
+//                .chatId(chatId)
+//                .text("!!!!")
     }
 
     private String getMarket(String bunch) {
