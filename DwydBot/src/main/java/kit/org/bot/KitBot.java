@@ -1,8 +1,10 @@
 package kit.org.bot;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import kit.org.bot.model.User;
 import kit.org.bot.model.dto.ProductSave;
 import kit.org.config.BotConfiguration;
+import kit.org.repository.UserRepository;
 import lombok.Getter;
 import lombok.Setter;
 import org.telegram.telegrambots.client.okhttp.OkHttpTelegramClient;
@@ -36,6 +38,8 @@ public class KitBot implements LongPollingSingleThreadUpdateConsumer {
     private final KitBotConfig myConfig;
     private final HttpClient httpClient;
     private final ObjectMapper objectMapper;
+    private final UserRepository userRepository;
+
 
     public KitBot(BotConfiguration configuration) {
         waitingForProduct = new ConcurrentHashMap<>();
@@ -45,6 +49,7 @@ public class KitBot implements LongPollingSingleThreadUpdateConsumer {
                 .connectTimeout(Duration.ofSeconds(10))
                 .build();
         objectMapper = new ObjectMapper();
+        userRepository = UserRepository.getInstance();
     }
 
     @Override
@@ -83,6 +88,9 @@ public class KitBot implements LongPollingSingleThreadUpdateConsumer {
                         ProductSave productSave = new ProductSave(marketCheckTypeAfterPreprocess, bunch[0], bunch[1], update.getMessage().getChatId());
                         sendRequest(productSave);
                         isSuccess = true;
+
+                        // TODO There place need create method to save data to repository
+                        userRepository.save(new User(chatId, marketCheckTypeAfterPreprocess, bunch[0], bunch[1]));
                     } catch (RuntimeException e) {
                         e.printStackTrace();
                     }
