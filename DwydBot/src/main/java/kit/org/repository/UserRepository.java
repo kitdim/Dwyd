@@ -58,6 +58,6 @@ public class UserRepository implements Repository<User> {
 
     @Override
     public List<User> findAll() {
-        return List.of();
+        return users;
     }
 }

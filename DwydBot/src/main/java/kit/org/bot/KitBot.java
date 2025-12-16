@@ -29,6 +29,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 @Getter
 @Setter
@@ -40,7 +43,6 @@ public class KitBot implements LongPollingSingleThreadUpdateConsumer {
     private final ObjectMapper objectMapper;
     private final UserRepository userRepository;
 
-
     public KitBot(BotConfiguration configuration) {
         waitingForProduct = new ConcurrentHashMap<>();
         myConfig = initBotConfig(configuration);
@@ -48,6 +50,9 @@ public class KitBot implements LongPollingSingleThreadUpdateConsumer {
         objectMapper = new ObjectMapper();
         userRepository = UserRepository.getInstance();
         httpClient = HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(10)).build();
+
+        ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
+        scheduler.scheduleAtFixedRate(this::processSendNotification, 10, 5, TimeUnit.MINUTES);
     }
 
     @Override
@@ -151,10 +156,62 @@ public class KitBot implements LongPollingSingleThreadUpdateConsumer {
         }
     }
 
-    public void sendNotification(Long chatId) {
-//        SendMessage message = SendMessage.builder()
-//                .chatId(chatId)
-//                .text("!!!!")
+    public void processSendNotification() {
+        Map<Long, HttpResponse<String>> clientMap = sendRequestsToServerForNotification();
+
+        if (clientMap == null || clientMap.entrySet().isEmpty()) {
+            return;
+        }
+
+        sendNotificationToClient(clientMap);
+    }
+
+    private Map<Long, HttpResponse<String>> sendRequestsToServerForNotification() {
+        Map<Long, HttpResponse<String>> clientMap = new HashMap<>();
+        List<Long> ids = userRepository.findAll().stream().map(User::getChatId).toList();
+
+        if (ids.isEmpty()) {
+            return null;
+        }
+
+        for (Long id : ids) {
+            String fullUrl = myConfig.urls.get("notification").concat("\\" + id);
+
+            try {
+                HttpRequest request = HttpRequest.newBuilder()
+                        .uri(URI.create(fullUrl))
+                        .header("Content-Type", "application/json")
+                        .header("Accept", "application/json")
+                        .GET()
+                        .build();
+
+                HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+                clientMap.put(id, response);
+
+            } catch (Exception e) {
+                throw new RuntimeException("Ошибка при отправке запроса: " + e.getMessage(), e);
+            }
+        }
+
+        return clientMap;
+    }
+
+    private void sendNotificationToClient(Map<Long, HttpResponse<String>> clientMap) {
+        for (var value : clientMap.entrySet()) {
+            String prices = value.getValue().body();
+            String chatId = String.valueOf(value.getKey());
+
+            SendMessage message = SendMessage.builder()
+                    .chatId(chatId)
+                    .text(prices)
+                    .build();
+
+            try {
+                telegramClient.execute(message); // Sending our message object to user
+            } catch (TelegramApiException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     private String getMarket(String bunch) {
